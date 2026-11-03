@@ -1,0 +1,70 @@
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 14-oct-2027.
+#-----------------------------------------------------------
+# Vivado v2026.1 (64-bit)
+# SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+# IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+# SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+# Start of session at: Thu Oct 22 00:29:57 2026
+# Process ID         : 28460
+# Current directory  : D:/deepseek herness/work/audio_axis
+# Command line       : vivado.exe -mode batch -source tools\program_axis.tcl -nojournal -log program_axis.log
+# Log file           : D:/deepseek herness/work/audio_axis/program_axis.log
+# Journal file       : 
+# Running On         : LAPTOP-6TJD1457
+# Platform           : Windows 11
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 9 8945H w/ Radeon 780M Graphics      
+# CPU Frequency      : 3992 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 16
+# Host memory        : 16419 MB
+# Swap memory        : 13958 MB
+# Total Virtual      : 30377 MB
+# Available Virtual  : 13685 MB
+#-----------------------------------------------------------
+source {tools\program_axis.tcl}
+# open_hw_manager
+open_hw_manager: Time (s): cpu = 00:00:09 ; elapsed = 00:00:06 . Memory (MB): peak = 702.578 ; gain = 272.445
+# if {[llength [get_hw_servers -quiet]] > 0} {
+#     disconnect_hw_server
+# }
+# connect_hw_server -url localhost:3121
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+
+****** Xilinx cs_server v2026.1
+  **** Build Info : #60 | 2026-06-15 19:15 UTC | a9691a9
+    ** Copyright 2017-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+
+
+
+# open_hw_target
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Digilent/210512180081
+# set dev [get_hw_devices xc7z020_1]
+# current_hw_device $dev
+# refresh_hw_device -update_hw_probes false $dev
+INFO: [Labtools 27-1435] Device xc7z020 (JTAG device index = 1) is not programmed (DONE status = 0).
+# set bit {D:/deepseek herness/work/audio_axis/audio_axis.bit}
+# puts ">>> bitstream: $bit  [file size $bit] bytes"
+>>> bitstream: D:/deepseek herness/work/audio_axis/audio_axis.bit  4045769 bytes
+# set_property PROGRAM.FILE $bit $dev
+# program_hw_devices $dev
+INFO: [Labtools 27-3164] End of startup status: HIGH
+# if {[catch {refresh_hw_device -update_hw_probes false $dev} e]} {
+#     puts ">>> refresh warning: $e"
+# }
+INFO: [Labtools 27-1434] Device xc7z020 (JTAG device index = 1) is programmed with a design that has no supported soft debug core(s) in it.
+# if {[catch {set done [get_property REGISTER.IR.BIT6_DONE $dev]} e]} {
+#     puts ">>> DONE property unavailable: $e"
+# } else {
+#     puts ">>> after : DONE = $done"
+# }
+>>> DONE property unavailable: ERROR: [Labtoolstcl 44-56] hw_device [xc7z020_1] does not have a [REGISTER.IR.BIT6_DONE] property
+
+# puts "########## PROGRAM DONE ##########"
+########## PROGRAM DONE ##########
+# close_hw_manager
+INFO: [Common 17-206] Exiting Vivado at Thu Oct 22 00:30:17 2026...

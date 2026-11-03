@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>端侧音频控制台</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --f:-apple-system,BlinkMacSystemFont,"SF Pro SC","Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;
+    --ink:#1d1d1f;--sub:#6e6e73;--line:rgba(0,0,0,.10);--line2:rgba(0,0,0,.06);
+    --bg:#ececed;--win:#fff;--side:#f2f2f4;--accent:#0071e3;--green:#28c840;
+  }
+  body{font-family:var(--f);background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;
+    display:flex;padding:14px;letter-spacing:-.005em}
+  .win{flex:1;background:var(--win);border-radius:11px;overflow:hidden;display:flex;flex-direction:column;
+    box-shadow:0 20px 60px -14px rgba(0,0,0,.28),0 0 0 .5px rgba(0,0,0,.16)}
+  .titlebar{height:40px;flex:0 0 40px;display:flex;align-items:center;padding:0 14px;gap:12px;
+    border-bottom:1px solid var(--line);background:#f6f6f7}
+  .tb-title{font-size:13px;font-weight:600}
+  .tb-sub{font-size:11px;color:var(--sub);font-family:var(--mono)}
+  .seg{margin-left:auto;display:flex;background:rgba(0,0,0,.05);border-radius:7px;padding:2px}
+  .seg button{border:0;background:transparent;font:inherit;font-size:12px;padding:4px 14px;border-radius:5px;color:#3c3c43;cursor:pointer}
+  .seg button.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.05);font-weight:500}
+  .stat{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--sub);margin-left:12px}
+  .led{width:6px;height:6px;border-radius:50%;background:#c7c7cc}
+  .led.ok{background:var(--green)}.led.bad{background:#ff9f0a}
+  .body{flex:1;display:flex;min-height:0}
+  .side{width:196px;flex:0 0 196px;background:var(--side);border-right:1px solid var(--line);
+    padding:10px 8px;display:flex;flex-direction:column;gap:2px;overflow:auto}
+  .grp{font-size:10.5px;font-weight:600;color:#8a8a8e;padding:12px 10px 4px;letter-spacing:.02em}
+  .item{display:flex;align-items:center;gap:9px;padding:6px 10px;border-radius:6px;font-size:13px;cursor:pointer}
+  .item:hover{background:rgba(0,0,0,.045)}
+  .item.on{background:var(--accent);color:#fff}
+  .item .ic{width:14px;text-align:center;font-size:12px;opacity:.9}
+  .item .badge{margin-left:auto;font-family:var(--mono);font-size:10.5px;opacity:.6}
+  .main{flex:1;min-width:0;overflow:auto;padding:18px 20px 26px}
+  .h{display:flex;align-items:baseline;gap:10px}
+  .h h1{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .h .r{font-size:11px;color:var(--sub);font-family:var(--mono);margin-left:auto}
+  .sub{font-size:12px;color:var(--sub);margin:4px 0 14px}
+  .page{display:none}.page.on{display:block}
+  /** 实时页两栏：左降噪、右收听+波形 */
+/** 频谱页：瀑布与读数并排（对数谱仍通栏） */
+.cols.meas{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);margin-top:0}
+    /* 录音页：五档对照表（表头比正文轻一档，数字等宽对齐） */
+    .abt{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+    .abt th{text-align:left;font-weight:500;color:var(--sub);font-size:11px;
+            padding:0 10px 6px 0;border-bottom:1px solid var(--line)}
+    .abt td{padding:6px 10px 6px 0;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+    .abt td.num{font-family:var(--mono);font-size:12px}
+    .abt tr.empty td{color:var(--sub);border-bottom:0}
+    .abt .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:1px}
+    /* 语音助手：对话气泡。用户靠右、小智靠左，等宽字体只用在工具回执上 */
+    .chat{flex:1;min-height:300px;max-height:392px;overflow-y:auto;padding:12px 2px;
+          display:flex;flex-direction:column;gap:9px}
+    .chatempty{color:var(--sub);font-size:12px;line-height:1.7;padding:24px 4px;text-align:center}
+    .msg{max-width:82%;padding:8px 11px;border-radius:12px;font-size:12.5px;line-height:1.62;
+         white-space:pre-wrap;word-break:break-word}
+    .msg.me{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+    .msg.ai{align-self:flex-start;background:#f0f0f4;color:#1c1c1e;border-bottom-left-radius:4px}
+    .msg.err{align-self:flex-start;background:#fff2f0;color:#c0271a;border:1px solid #ffd7d2}
+    .msg .mt{display:block;font-size:10px;opacity:.55;margin-top:4px;font-family:var(--mono)}
+    .msg .steps{margin-top:5px;font-family:var(--mono);font-size:10.5px;opacity:.7;line-height:1.55}
+    .chatrow{display:flex;gap:8px;align-items:center;margin-top:10px}
+    .chatinput{flex:1;height:32px;border:1px solid var(--line);border-radius:8px;padding:0 11px;
+               font-size:13px;font-family:var(--f);background:#fff;color:inherit}
+    .chatinput:focus{outline:none;border-color:var(--accent)}
+    .abnote{font-size:11px;color:var(--sub);margin-top:9px;line-height:1.65}
+    .ablegend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--sub);margin-top:8px}
+    .ablegend i{display:inline-block;width:9px;height:3px;border-radius:2px;margin-right:6px;vertical-align:3px}
+
+.cols.meas .reads{grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
+    /* 2 列 × 5 行要压紧，否则读数块比左边的瀑布高出一大截（整页又超一屏） */
+    .cols.meas .rd{padding:4px 9px}
+    .cols.meas .rd .v{font-size:13.5px;margin-top:0}
+.cols{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0 14px;align-items:start}
+.col{min-width:0}
+@media (max-width:1200px){.cols{grid-template-columns:1fr}}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+  .st{background:#fff;border:.5px solid var(--line);border-radius:8px;padding:9px 12px}
+  .st .k{font-size:10.5px;color:var(--sub)}
+  .st .v{font-family:var(--mono);font-size:18px;font-weight:500;margin-top:2px;font-variant-numeric:tabular-nums}
+  .st .v small{font-size:10.5px;color:var(--sub);margin-left:3px;font-weight:400}
+  .panel{background:#fff;border:.5px solid var(--line);border-radius:10px;padding:13px 15px;margin-bottom:11px}
+  .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .ph b{font-size:12.5px;font-weight:600}
+  .ph span{font-size:11px;color:var(--sub);font-family:var(--mono)}
+  .seg2{display:inline-flex;background:rgba(0,0,0,.05);border-radius:7px;padding:2px;gap:2px}
+  .seg2 button{border:0;background:transparent;font:inherit;font-size:12px;padding:5px 14px;min-height:26px;border-radius:5px;color:#3c3c43;cursor:pointer}
+  .seg2 button.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.05);font-weight:500}
+  .sl{display:flex;align-items:center;gap:12px;margin-top:11px}
+  .sl label{font-size:12px;color:#3c3c43;width:76px;flex:0 0 76px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sl input[type=range]{flex:1;max-width:320px;accent-color:var(--accent)}
+  .sl .val{font-family:var(--mono);font-size:12px;color:var(--sub);min-width:64px;text-align:right;white-space:nowrap}
+  .btn{border:.5px solid var(--line);background:#fff;font:inherit;font-size:12px;padding:5px 13px;min-height:26px;
+    border-radius:7px;cursor:pointer;color:var(--ink)}
+  .btn:hover{background:#f5f5f7}
+  .btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+  .btn.primary:hover{background:#0066cc}
+  .btn.on{background:#e8f1fe;border-color:#b9d7fb;color:#0066cc;font-weight:500}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .wav{width:100%;border:.5px solid var(--line);border-radius:7px;padding:6px 9px;font:inherit;font-size:12px;font-family:var(--mono)}
+  .cv{width:100%;display:block;border-radius:8px;background:#0d1117}
+  /* 画布高度必须写死：fit() 会按 clientHeight 重设 canvas.height，
+     没有 CSS 高度时布局高度会跟着长，逐帧越画越大（11-02 踩过）。 */
+  #cvWave{height:90px} #cvMini{height:110px} #mxSpec{height:225px} #mxFall{height:252px}
+  .cvwrap{background:#0d1117;border-radius:8px;overflow:hidden}
+  .reads{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:11px;grid-auto-rows:1fr}
+  .rd{border:.5px solid var(--line);border-radius:8px;padding:8px 10px}
+  .rd .k{font-size:10.5px;color:var(--sub)}
+  .rd .v{font-family:var(--mono);font-size:15px;margin-top:2px;font-variant-numeric:tabular-nums}
+  .insp{width:240px;flex:0 0 240px;border-left:1px solid var(--line);background:#fafafb;padding:15px;overflow:auto}
+  .insp .t{font-size:11px;font-weight:600;color:#8a8a8e;letter-spacing:.03em;margin-bottom:8px}
+  .kv{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:.5px solid var(--line2)}
+  .kv span{color:var(--sub)}
+  .kv b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+  .ev{font-size:11.5px;color:var(--sub);line-height:1.85;max-height:200px;overflow:auto}
+  .ok{color:#248a3d}
+
+    /** 底噪行的"链位置"徽标：一行放得下，细节走 title */
+.wchip{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;font-style:normal;
+  font-size:11px;line-height:16px;white-space:nowrap;background:#fff1f0;color:#c0392b;border:1px solid #f3c9c4}
+.wchip.ok{background:#eef9f0;color:#1f8b4c;border-color:#c6e7cf}
+.offbar{margin:0 0 14px;padding:10px 14px;border-radius:10px;background:#fff4f2;
+      border:1px solid #f3c9c2;color:#8a2f21;font-size:12.5px;line-height:1.6;display:flex;gap:10px}
+    .offbar[hidden]{display:none}   /* 作者样式的 display:flex 会盖过 UA 的 [hidden]，必须显式关掉 */
+    .offbar b{color:#b3261e;white-space:nowrap}
+    .dis{opacity:.42;pointer-events:none;filter:saturate(.4)}
+    /* 瀑布色标：和 drawFall 的色停靠点对应（−100 深蓝 → −60 绿 → −20 橙） */
+    .legend{display:flex;align-items:center;gap:6px;margin-top:8px;font-family:var(--mono);
+      font-size:10px;color:var(--sub)}
+    .legend i{flex:1;height:5px;border-radius:3px}
+    .legend i:first-of-type{background:linear-gradient(90deg,#0d1117,#134f6b)}
+    .legend i:last-of-type{background:linear-gradient(90deg,#1f9e63,#e8c33a,#e0651e)}
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="titlebar">
+    <div class="tb-title">端侧音频控制台</div>
+    <div class="tb-sub">ZYNQ-7020</div>
+    <div class="seg" id="seg">
+      <button data-p="recv" class="on">声音接收</button>
+      <button data-p="play">声音播放</button>
+      <button data-p="ai">AI 控制</button>
+    </div>
+    <div class="stat"><span class="led" id="led"></span><span id="tbState">连接中…</span></div>
+  </div>
+  <div class="body">
+    <aside class="side">
+      <div class="grp">接收</div>
+      <div class="item on" data-p="recv"><span class="ic">◉</span>实时<span class="badge" id="bFps">—</span></div>
+      <div class="item" data-p="meas"><span class="ic">▤</span>频谱·测量</div>
+      <div class="item" data-p="ab"><span class="ic">◐</span>录音与 A/B</div>
+      <div class="grp">播放</div>
+      <div class="item" data-p="play"><span class="ic">♪</span>音效与环回</div>
+      <div class="grp">AI</div>
+      <div class="item" data-p="ai"><span class="ic">◆</span>语音助手</div>
+      <div class="grp">系统</div>
+      <div class="item" data-p="diag"><span class="ic">?</span>自检与关于</div>
+      <div style="margin-top:auto;padding:8px 10px;font-size:11px;color:var(--sub);line-height:1.7">
+        板子 <span id="sBoardIp" style="font-family:var(--mono)">—</span><br>
+        本机 <span id="sPcIp" style="font-family:var(--mono)">—</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="offbar" id="offBar" hidden data-kind="">
+        <b>板子离线</b><span>控制字发不出去、上行音频也收不到。先确认：板子上电、网线插在 Zynq 的 RJ45（不是路由器）、PC 这块网口出现 169.254.191.246。板子在线后本页自动解除置灰。</span>
+      </div>
+      <section class="page on" id="p-recv">
+        <div class="h"><h1>实时</h1><div class="r">48 kHz · 16 bit · 立体声</div></div>
+        <div class="sub">板子麦克风上行；下面显示的是控制台正在处理的那一路。</div>
+        <div class="row">
+          <div class="st"><div class="k">帧率</div><div class="v" id="vFps">—<small>fps</small></div></div>
+          <div class="st"><div class="k">电平</div><div class="v" id="vRms">—<small>dBFS</small></div></div>
+          <div class="st"><div class="k">包数 / 欠载</div><div class="v" id="vPkt">—</div></div>
+          <div class="st"><div class="k">降噪耗时</div><div class="v">0.127<small>ms</small></div></div>
+        </div>
+        <div class="cols">
+          <div class="col">
+        <div class="panel">
+          <div class="ph"><b>降噪模式</b><span id="dspSrc">板子回读</span></div>
+          <div class="seg2" id="dspSeg">
+            <button data-dsp="bypass">旁路</button><button data-dsp="rnnoise">RNNoise</button>
+            <button data-dsp="gate">噪声门</button><button data-dsp="pl">PL 谱减</button>
+          </div>
+          <div class="sl"><label>时长比例</label><input type="range" id="ts" min="50" max="100" step="1" value="100"><div class="val" id="tsV">100%</div></div>
+          <div class="sl"><label>底噪</label>
+            <button class="btn" data-noise="0">无</button><button class="btn" data-noise="300">轻</button>
+            <button class="btn" data-noise="800">中</button><button class="btn" data-noise="1500">重</button>
+            <div class="val" id="noiseV">0</div>
+          </div>
+          <div class="sl"><label>增益</label>
+            <button class="btn" data-gain="0">0 dB</button><button class="btn" data-gain="-3">−2.5</button>
+            <button class="btn" data-gain="-6">−6</button><button class="btn" data-gain="-12">−12</button>
+            <div class="val" id="gainV">—</div>
+          </div>
+          <div class="sl"><label>延迟</label>
+            <button class="btn" data-lag="30">30 帧</button><button class="btn" data-lag="20">20 帧</button>
+            <button class="btn" id="btnLatOff">关</button>
+            <div class="val" id="latV">—</div>
+          </div>
+          <div class="sl"><label>PC 增强</label>
+            <button class="btn" id="btnEnh2">关闭</button>
+            <input type="range" id="enhStr2" min="0" max="100" step="1" value="50"
+                   style="width:150px;accent-color:var(--accent)">
+            <div class="val" id="enhV2">强度 50</div>
+          </div>
+          <div style="font-size:11.5px;color:var(--sub);margin-top:2px;line-height:1.6">
+            PC 增强是在收到板子音频之后再降一遍噪（与上面四档板内模式可叠加）。
+          </div>
+        </div>
+          </div>
+          <div class="col">
+        <div class="panel">
+          <div class="ph"><b>收听</b><span id="listenHint">未收听</span></div>
+          <div class="sl"><label>音量</label><input type="range" id="vol" min="0" max="100" value="80"><div class="val" id="volV">80%</div></div>
+          <div class="btns">
+            <button class="btn primary" id="btnListen">开始收听</button>
+            <button class="btn" id="btnTone">440 Hz 测试音</button>
+            <button class="btn" id="btnSim">模拟信号源</button>
+          </div>
+          <div class="abnote" id="rxNote" style="display:none"></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><b>波形</b><span>最近一块</span></div>
+          <div class="cvwrap"><canvas class="cv" id="cvWave" height="90"></canvas></div>
+        </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><b>输入频谱</b><span id="specHint">72 段对数谱</span></div>
+          <div class="cvwrap"><canvas class="cv" id="cvMini" height="110"></canvas></div>
+        </div>
+      </section>
+
+      <section class="page" id="p-meas">
+        <div class="h"><h1>频谱 · 测量</h1><div class="r">4096 点 Hann · 11.7 Hz</div></div>
+        <div class="sub">板载频谱仪：72 段对数谱 + 2 s 瀑布 + 电平/信噪比/失真读数。</div>
+        <div class="panel">
+          <div class="ph"><b>对数频谱 · 72 段</b>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="specRate">—</span>
+              <button class="btn" id="btnFreeze" style="font-size:11px;padding:3px 10px;min-height:22px">冻结</button>
+            </div>
+          </div>
+          <div class="cvwrap"><canvas class="cv" id="mxSpec" height="225"></canvas></div>
+        </div>
+        <div class="cols meas">
+          <div class="col">
+        <div class="panel">
+          <div class="ph"><b>瀑布 · 2 s</b><span>每 20 ms 一行</span></div>
+          <div class="cvwrap"><canvas class="cv" id="mxFall" height="252"></canvas></div>
+          <div class="legend"><span>−100</span><i></i><span>−60</span><i></i><span>−20 dBFS</span></div>
+        </div>
+          </div>
+          <div class="col">
+        <div class="panel">
+          <div class="ph"><b>读数</b><span id="mPeakHz">—</span></div>
+          <div class="reads">
+            <div class="rd"><div class="k">电平</div><div class="v" id="mRms">—</div></div>
+            <div class="rd"><div class="k">峰值频率</div><div class="v" id="mPk">—</div></div>
+            <div class="rd"><div class="k">噪声底</div><div class="v" id="mFloor">—</div></div>
+            <div class="rd"><div class="k">信噪比</div><div class="v" id="mSnr">—</div></div>
+            <div class="rd"><div class="k">失真 THD</div><div class="v" id="mThd">—</div></div>
+            <div class="rd"><div class="k">峰值电平</div><div class="v" id="mPeakDb">—</div></div>
+          </div>
+          <div class="reads">
+            <div class="rd"><div class="k">低 &lt;300 Hz</div><div class="v" id="mLo">—</div></div>
+            <div class="rd"><div class="k">中 300–3k</div><div class="v" id="mMid">—</div></div>
+            <div class="rd"><div class="k">高 &gt;3k</div><div class="v" id="mHi">—</div></div>
+            <div class="rd"><div class="k">削波</div><div class="v" id="mClip">—</div></div>
+            <div class="rd"><div class="k">响度</div><div class="v" id="mLufs">—</div></div>
+          </div>
+        </div>
+      
+          </div>
+        </div></section>
+
+      <section class="page" id="p-ab">
+        <div class="h"><h1>录音与 A/B</h1><div class="r">48 kHz / 16 bit WAV</div></div>
+        <div class="sub">把「你正在听的那一路」存成 WAV，按模式并排比较。</div>
+        <div class="panel">
+          <div class="ph"><b>逐档录制</b><span id="abHint">点哪档录哪档，同一档可重录</span></div>
+          <div class="btns">
+            <button class="btn" data-ab="bypass">旁路</button>
+            <button class="btn" data-ab="gate">轻量门</button>
+            <button class="btn" data-ab="pl">PL 谱减</button>
+            <button class="btn" data-ab="rnnoise">RNNoise</button>
+            <button class="btn" data-ab="enh">PC 增强</button>
+            <button class="btn primary" id="btnAbAll">全部录一遍</button>
+          </div>
+          <table class="abt" id="abTable">
+            <thead><tr><th>情况</th><th>电平</th><th>噪声底</th><th>峰值</th><th>时长</th><th>WAV</th></tr></thead>
+            <tbody id="abBody"><tr class="empty"><td colspan="6">还没有录，点上面任意一档开始</td></tr></tbody>
+          </table>
+          <div class="abnote">每档录 6 s，读数取「你正在听的那一路」；PC 增强那一档板子挂旁路，差值才是 PC 端自己的贡献。</div>
+        </div>
+        <div class="cols">
+          <div class="col">
+            <div class="panel">
+              <div class="ph"><b>波形对比</b><span>96 点峰值包络 · 越高越响</span></div>
+              <div class="cvwrap"><canvas class="cv" id="cvAb" height="120"></canvas></div>
+              <div class="ablegend" id="abLegend"></div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="panel">
+              <div class="ph"><b>声码器</b><span>LPC-16 · 7.2 kbps</span></div>
+              <div class="btns">
+                <button class="btn" id="btnVoc">声码器开关</button>
+                <button class="btn" id="btnVocTry">试听 8 s</button>
+              </div>
+              <div class="abnote" id="vocV" style="font-family:var(--mono)">—</div>
+            </div>
+            <div class="panel">
+              <div class="ph"><b>PC 端增强</b><span id="enhHint">关闭</span></div>
+              <div class="sl"><label>开关</label>
+                <button class="btn" id="btnEnh">增强</button>
+                <input type="range" id="enhStr" min="0" max="100" step="1" value="50">
+                <div class="val" id="enhV">50</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="p-play">
+        <div class="h"><h1>声音播放</h1><div class="r">推流到板子 50506</div></div>
+        <div class="sub">音效只作用于「推给板子」的那一路，不影响你在控制台听到的声音。</div>
+        <div class="panel">
+          <div class="ph"><b>播放音效</b><span id="fxHint">关闭</span></div>
+          <div class="btns">
+            <button class="btn" id="btnFx">音效开关</button>
+            <button class="btn" data-fx="flat">原声</button><button class="btn" data-fx="vocal">人声</button>
+            <button class="btn" data-fx="pop">流行</button><button class="btn" data-fx="rock">摇滚</button>
+            <button class="btn" data-fx="jazz">爵士</button><button class="btn" data-fx="bass">重低音</button>
+            <button class="btn" data-fx="vivid">鲜活</button>
+          </div>
+          <div class="sl"><label>响度归一</label><button class="btn" id="btnNorm">关闭</button><div class="val" id="normV">— LUFS</div></div>
+          <div class="sl"><label>真峰值</label>
+            <button class="btn" data-tp="-1">−1</button><button class="btn" data-tp="-2">−2</button><button class="btn" data-tp="-3">−3</button>
+            <div class="val" id="tpV">—</div>
+          </div>
+          <div class="sl"><label>交叉馈送</label>
+            <button class="btn" data-cf="0">关</button><button class="btn" data-cf="0.2">轻</button>
+            <button class="btn" data-cf="0.35">中</button><button class="btn" data-cf="0.5">强</button>
+            <div class="val" id="cfV">—</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><b>双 DAC 输出</b><span id="dacHint">M0 同源</span></div>
+          <div class="btns">
+            <button class="btn" data-dac="0">M0 同源</button><button class="btn" data-dac="1">M1 左右分离</button>
+            <button class="btn" data-dac="2">M2 外接独占</button>
+            <button class="btn" id="btnCal">DAC 校准</button>
+          </div>
+          <div class="sl"><label>校准曲线</label><div class="val" id="calV" style="width:auto;flex:1;text-align:left">未加载</div></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><b>同步电脑声音</b><span id="loopHint">停止</span></div>
+          <div class="sl"><label>同步电脑声音</label>
+            <button class="btn" id="btnLoop">开始同步</button>
+            <button class="btn" id="btnLoopOnly">只让板子响</button>
+            <div class="val" id="loopV">—</div>
+          </div>
+          <div class="sl"><label>往板子推</label>
+            <button class="btn" id="btnPush">推一段 WAV</button>
+            <button class="btn" id="btnRec30">推 30 s 测试音</button>
+            <button class="btn" id="btnPushStop">停止推流</button>
+            <div class="val" id="pushV2">—</div>
+          </div>
+          <div class="sl"><label>WAV 路径</label><input class="wav" id="wavPath" placeholder="留空 = 播放 440 Hz 测试音"></div>
+          <div class="sl"><label>时长</label><input type="range" id="pushSecs" min="1" max="30" step="1" value="10"><div class="val" id="pushV">10 s</div></div>
+        </div>
+      </section>
+
+      <section class="page" id="p-ai">
+        <div class="h"><h1>AI 控制</h1><div class="r">小智 · 语音助手</div></div>
+        <div class="sub">打字或说话都行；它会调工具改板子，每次动作后回读确认。回答可以先看文字，也可以让它念出来。</div>
+        <div class="cols">
+          <div class="col">
+            <div class="panel" style="display:flex;flex-direction:column">
+              <div class="ph"><b>对话</b><span id="chatHint">未开始</span></div>
+              <div class="chat" id="chatBox">
+                <div class="chatempty">还没有对话。下面输入一句话，比如「现在的降噪模式是什么」。</div>
+              </div>
+              <div class="chatrow">
+                <input class="chatinput" id="chatIn" placeholder="打字给小智…（回车发送）">
+                <button class="btn primary" id="btnChatSend">发送</button>
+                <button class="btn" id="btnChatClear">清空</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="panel">
+              <div class="ph"><b>输出方式</b><span id="chatVoiceHint">文字</span></div>
+              <div class="btns">
+                <button class="btn" id="btnVoiceText">只看文字</button>
+                <button class="btn" id="btnVoiceSpeak">念出来（板子喇叭）</button>
+                <button class="btn" id="btnVoiceTest">试听一句</button>
+              </div>
+              <div class="abnote" id="chatBoardLine">板子喇叭：确认中…</div>
+              <div class="abnote">「念出来」走 ESP32 的 TCP 9200（和语音模式同一个喇叭）；板子不在线时只出文字，不会报错。</div>
+            </div>
+            <div class="panel">
+              <div class="ph"><b>它能做的事</b><span>10 个工具</span></div>
+              <div class="kv"><span>切降噪</span><b>旁路 / RNNoise / 噪声门 / PL 谱减</b></div>
+              <div class="kv"><span>调参数</span><b>时长 · 增益 · 底噪 · 延迟</b></div>
+              <div class="kv"><span>查状态</span><b>板子真值 + 收听开关</b></div>
+              <div class="kv"><span>语音输入</span><b>python -m work.xiaozhi.run --voice</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="page" id="p-diag">
+        <div class="h"><h1>自检与关于</h1><div class="r">PC ↔ 板子 全链路</div></div>
+        <div class="sub">一键跑一遍：收听 → 切模式 → 回读 → 频谱，逐项给出 PASS / FAIL。</div>
+        <div class="panel">
+          <div class="ph"><b>链路自检</b><span id="diagWhen">未运行</span></div>
+          <div class="btns">
+            <button class="btn primary" id="btnDiag">运行自检</button>
+            <button class="btn" id="btnPing">板子通信自检</button>
+            <button class="btn" id="btnDiagDump">导出诊断包</button>
+            <span id="pingOut" style="font-family:var(--mono);font-size:11px;color:var(--sub)"></span>
+          </div>
+          <table class="abt" id="diagTable">
+            <thead><tr><th>检查项</th><th>读数</th><th style="width:64px">结果</th></tr></thead>
+            <tbody id="diagBody"><tr class="empty"><td colspan="3">还没有跑，点「运行自检」</td></tr></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="ph"><b>接口与端口</b><span>固件写死</span></div>
+          <div class="kv"><span>上行音频</span><b>50505 板 → PC</b></div>
+          <div class="kv"><span>下行音频</span><b>50506 PC → 板</b></div>
+          <div class="kv"><span>控制面</span><b>50507 子网广播</b></div>
+          <div class="kv"><span>状态包</span><b>50508 板 → PC</b></div>
+          <div class="kv"><span>控制台 HTTP</span><b id="diagHttp">8770</b></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><b>边界</b><span>如实写</span></div>
+          <div style="font-size:11.5px;color:var(--sub);line-height:1.8">
+            控制字节必须发子网广播（单播会被丢）；50508 只能有一个主人（控制台占用）；<br>
+            RNNoise 在 ARM 上只能跑 ~73 fps，PL 谱减不占 ARM；时长缩放只在降噪模式下有效。
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="insp">
+      <div class="t">板子状态</div>
+      <div class="kv"><span>在线</span><b id="iOnline">—</b></div>
+      <div class="kv"><span>模式</span><b id="iMode">—</b></div>
+      <div class="kv"><span>时长比例</span><b id="iTs">—</b></div>
+      <div class="kv"><span>增益</span><b id="iGain">—</b></div>
+      <div class="kv"><span>状态包</span><b id="iStat">—</b></div>
+      <div class="t" style="margin-top:16px">双 DAC</div>
+      <div class="kv"><span>当前</span><b id="iDac">—</b></div>
+            <div class="kv"><span>来源</span><b id="iDacSrc">—</b></div>
+      <div class="t" style="margin-top:16px">最近事件</div>
+      <div class="ev" id="evList">—</div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s){ return document.querySelector(s); };
+  var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var st = { listen:false, fx:{}, dac:0, loop:null, enh:false, voc:null, sim:false };
+  var frozen = false;   // 频谱冻结：开了就只停重画，后台取数照旧（点一下就回到实时）
+
+  function api(path, body){
+    var opt = body ? { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) } : undefined;
+    return fetch(path, opt).then(function(r){ return r.json(); });
+  }
+  function cmd(body){ return api("/api/cmd", body).catch(function(e){ console.warn("cmd", e); }); }
+  function fmt(x, d){ return (x === null || x === undefined || isNaN(x)) ? "—" : Number(x).toFixed(d); }
+
+  // 顶部分段是"三大块"的入口，页面比它多（meas/ab 都属于接收，diag 不属于任何块），
+  // 所以高亮要按分组算，不能直接拿页面 id 比。
+  var PGRP = {recv:"recv", meas:"recv", ab:"recv", play:"play", ai:"ai", diag:""};
+  function paint(p){
+    var g = PGRP[p] || "";
+    $$("#seg button").forEach(function(b){ b.classList.toggle("on", b.dataset.p === g); });
+    $$(".side .item").forEach(function(b){ b.classList.toggle("on", b.dataset.p === p); });
+    $$(".page").forEach(function(el){ el.classList.toggle("on", el.id === "p-" + p); });
+    if(p === "meas"){ pollSpec(); }
+    if(p === "recv"){ pollWave(); }
+    if(p === "diag"){ $("#diagHttp").textContent = location.port || "8770"; }
+  }
+  $$("#seg button").forEach(function(b){ b.onclick = function(){ paint(b.dataset.p); }; });
+  $$(".side .item").forEach(function(b){ b.onclick = function(){ paint(b.dataset.p); }; });
+
+  $("#btnListen").onclick = function(){ cmd({op:"listen", v:!st.listen}).then(poll); };
+  $("#btnTone").onclick = function(){ cmd({op:"tone", v:true}); };
+  // A1：模拟源是一个开关，不再分「模拟信号源 / 停止模拟」两个按钮
+  $("#btnSim").onclick = function(){
+    var on = !st.sim;
+    if(!on && window.__stopPlay){ window.__stopPlay(); }      // 关模拟就别再留着播放泵空转
+    if(on && window.__startPlay){                              // 开模拟必须自己起泵：它不经过「开始收听」
+      window.__startPlay().catch(function(){});
+    }
+    cmd({op:"sim", v:on}).then(poll);
+  };
+  $$("#dspSeg button").forEach(function(b){ b.onclick = function(){ cmd({op:"dsp", v:b.dataset.dsp}).then(poll); }; });
+  $("#ts").oninput = function(){ $("#tsV").textContent = $("#ts").value + "%"; };
+  $("#ts").onchange = function(){ cmd({op:"ts", v:parseInt($("#ts").value,10)}).then(poll); };
+  $$("[data-noise]").forEach(function(b){
+    b.onclick = function(){ var v=parseInt(b.dataset.noise,10); cmd({op:"noise", v:v}).then(function(){ $("#noiseV").textContent=v; poll(); }); };
+  });
+  $$("[data-gain]").forEach(function(b){
+    b.onclick = function(){ cmd({op:"gain", db:parseInt(b.dataset.gain,10)}).then(poll); };
+  });
+  $$("[data-lag]").forEach(function(b){
+    b.onclick = function(){ cmd({op:"lat", frames:parseInt(b.dataset.lag,10), on:true}).then(poll); };
+  });
+  $("#btnLatOff").onclick = function(){ cmd({op:"lat", on:false}).then(poll); };
+
+  var AB_COL = {bypass:"#8b93a7", gate:"#7cc4ff", pl:"#3ddc84", rnnoise:"#ffc857", enh:"#ff8a65"};
+  function abRun(modes){
+    var hint = $("#abHint");
+    hint.textContent = "录制中…（每档 6 s，切档后要等 1.2 s 稳定）";
+    cmd({op:"ab", modes:modes, secs:6}).then(function(r){
+      hint.textContent = (r && r.ack) ? r.ack : "A/B 未响应";
+      setTimeout(function(){ if(!(st.ab && st.ab.running)) hint.textContent = "同一档可重录"; }, 5000);
+    });
+  }
+  $$("[data-ab]").forEach(function(b){
+    b.onclick = function(){ abRun([b.dataset.ab]); };
+  });
+  $("#btnAbAll").onclick = function(){ abRun(["bypass","gate","pl","rnnoise","enh"]); };
+
+  function abPaint(){
+    var ab = (st.ab || {rows:[]});
+    var body = $("#abBody");
+    if(!ab.rows.length){
+      body.innerHTML = '<tr class="empty"><td colspan="6">还没有录，点上面任意一档开始</td></tr>';
+    } else {
+      body.innerHTML = ab.rows.map(function(r){
+        var c = AB_COL[r.mode] || "#8b93a7";
+        return '<tr><td><i class="dot" style="background:' + c + '"></i>' + r.label + '</td>' +
+               '<td class="num">' + r.rms_db.toFixed(1) + ' dBFS</td>' +
+               '<td class="num">' + r.floor_db.toFixed(1) + ' dBFS</td>' +
+               '<td class="num">' + r.peak_db.toFixed(1) + ' dBFS</td>' +
+               '<td class="num">' + r.secs.toFixed(1) + ' s</td>' +
+               '<td class="num" style="color:var(--sub)">' + r.file + '</td></tr>';
+      }).join("");
+    }
+    $("#abLegend").innerHTML = ab.rows.map(function(r){
+      return '<span><i style="background:' + (AB_COL[r.mode] || "#8b93a7") + '"></i>' + r.label + '</span>';
+    }).join("");
+    if(!$("#p-ab").classList.contains("on")){ return; }
+    var cv = $("#cvAb");
+    var o = fit(cv), g = o.g, w = o.w, h = o.h;
+    g.clearRect(0, 0, w, h);
+    if(!ab.rows.length){ return; }
+    var maxv = 0.001;
+    ab.rows.forEach(function(r){ r.env.forEach(function(v){ if(v > maxv){ maxv = v; } }); });
+    ab.rows.forEach(function(r){
+      g.beginPath();
+      r.env.forEach(function(v, i){
+        var x = (i / (r.env.length - 1)) * w;
+        var y = h - (v / maxv) * (h - 6) - 3;
+        if(i === 0){ g.moveTo(x, y); } else { g.lineTo(x, y); }
+      });
+      g.strokeStyle = AB_COL[r.mode] || "#8b93a7";
+      g.lineWidth = 1.4;
+      g.globalAlpha = 0.92;
+      g.stroke();
+    });
+    g.globalAlpha = 1;
+  }
+  $("#btnVoc").onclick = function(){ cmd({op:"voc", v: !(st.voc && st.voc.on)}).then(poll); };
+  $("#btnVocTry").onclick = function(){ cmd({op:"voc", v:true, secs:8}).then(poll); };
+  $("#btnEnh").onclick = function(){ cmd({op:"enh", v: !st.enh}).then(poll); };
+  $("#btnEnh2").onclick = function(){ cmd({op:"enh", v: !st.enh}).then(poll); };
+  $("#enhStr2").oninput = function(){ $("#enhV2").textContent = "强度 " + $("#enhStr2").value; };
+  $("#enhStr2").onchange = function(){
+    cmd({op:"enh", v:true, strength:parseInt($("#enhStr2").value,10)}).then(poll);
+  };
+  $("#enhStr").oninput = function(){ $("#enhV").textContent = $("#enhStr").value; };
+  $("#enhStr").onchange = function(){ cmd({op:"enh", v:true, strength:parseInt($("#enhStr").value,10)}).then(poll); };
+
+  $("#btnFx").onclick = function(){ cmd({op:"fx", on: !(st.fx && st.fx.on)}).then(poll); };
+  $$("[data-fx]").forEach(function(b){ b.onclick = function(){ cmd({op:"fx", preset:b.dataset.fx, on:true}).then(poll); }; });
+  $("#btnNorm").onclick = function(){ var on=!(st.fx && st.fx.norm && st.fx.norm.on); cmd({op:"fx", norm:on}).then(poll); };
+  $$("[data-tp]").forEach(function(b){ b.onclick = function(){ cmd({op:"fx", tp:parseFloat(b.dataset.tp)}).then(poll); }; });
+  $$("[data-cf]").forEach(function(b){ b.onclick = function(){ cmd({op:"fx", crossfeed:parseFloat(b.dataset.cf)}).then(poll); }; });
+  $$("[data-dac]").forEach(function(b){ b.onclick = function(){ cmd({op:"dac", m:parseInt(b.dataset.dac,10)}).then(poll); }; });
+  $("#btnCal").onclick = function(){ cmd({op:"fx", cal: !(st.fx && st.fx.cal && st.fx.cal.on)}).then(poll); };
+  $("#btnLoop").onclick = function(){ cmd({op:"loop", on: !(st.loop && st.loop.on)}).then(poll); };
+  $("#btnLoopOnly").onclick = function(){ cmd({op:"loop", on:true, board_only:true}).then(poll); };
+  $("#btnPush").onclick = function(){
+    var body = {op:"push", v:parseInt($("#pushSecs").value,10), src:"tone"};
+    var f = ($("#wavPath").value||"").trim();
+    if(f){ body.file = f; body.src = "wav"; }
+    cmd(body).then(poll);
+  };
+  $("#pushSecs").oninput = function(){ $("#pushV").textContent = $("#pushSecs").value + " s"; };
+
+  $("#btnPushStop").onclick = function(){ cmd({op:"push", v:0}).then(poll); };
+  $("#btnRec30").onclick = function(){ cmd({op:"push", v:30, src:"tone"}).then(poll); };
+  // B3：冻结只停"重画"，不动取数 —— 解开时立刻回到实时，不用等下一次轮询
+  $("#btnFreeze").onclick = function(){
+    frozen = !frozen;
+    this.textContent = frozen ? "已冻结 · 继续" : "冻结";
+    this.classList.toggle("on", frozen);
+    if(frozen){ $("#specRate").textContent = "已冻结"; }
+  };
+  // ---------------- 语音助手（对话）----------------
+  function chatRender(){
+    var c = (st.chat || {log: []});
+    var box = $("#chatBox");
+    if(!c.log || !c.log.length){
+      box.innerHTML = '<div class="chatempty">还没有对话。下面输入一句话，比如「现在的降噪模式是什么」。</div>';
+    } else {
+      box.innerHTML = c.log.map(function(m){
+        if(m.role === "user"){
+          return '<div class="msg me">' + esc(m.text) + '<span class="mt">' + m.t + '</span></div>';
+        }
+        if(m.role === "error"){
+          return '<div class="msg err">' + esc(m.text) + '<span class="mt">' + m.t + '</span></div>';
+        }
+        var steps = (m.steps && m.steps.length)
+          ? '<div class="steps">' + m.steps.map(function(x){
+              return "· " + esc(x.name) + " → " + esc(String(x.result).slice(0, 120));
+            }).join("<br>") + '</div>'
+          : "";
+        var tag = m.voice ? " · 已念出" : "";
+        return '<div class="msg ai">' + esc(m.text) + steps +
+               '<span class="mt">' + m.t + (m.ms ? " · " + (m.ms / 1000).toFixed(1) + " s" : "") + tag + '</span></div>';
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+    $("#chatHint").textContent = c.busy ? "在思考…" : (c.log && c.log.length ? "已接通" : "未开始");
+    $("#chatVoiceHint").textContent = c.voice ? "语音（板子喇叭）" : "文字";
+    var bl = $("#chatBoardLine");
+    bl.textContent = "板子喇叭：" + (c.board_ip || "未确认") +
+                     (c.board_ok ? "（9200 已连通）" : "（未连通 → 只能出文字）");
+    bl.style.color = c.board_ok ? "" : "#d9534f";
+    $("#btnVoiceText").className = "btn " + (c.voice ? "" : "on");
+    $("#btnVoiceSpeak").className = "btn " + (c.voice ? "on" : "");
+    $("#btnChatSend").disabled = !!c.busy;
+  }
+  function esc(t){
+    return String(t == null ? "" : t).replace(/[&<>]/g, function(c){
+      return {"&":"&amp;", "<":"&lt;", ">":"&gt;"}[c];
+    });
+  }
+  function chatSend(){
+    var el = $("#chatIn"), text = (el.value || "").trim();
+    if(!text){ return; }
+    el.value = "";
+    cmd({op:"chat", text:text}).then(function(r){
+      if(r && r.ok === false){ $("#chatHint").textContent = r.ack || "没发出去"; }
+      poll();
+    });
+  }
+  $("#btnChatSend").onclick = chatSend;
+  $("#chatIn").onkeydown = function(e){ if(e.key === "Enter"){ chatSend(); } };
+  $("#btnChatClear").onclick = function(){ cmd({op:"chat_clear"}).then(poll); };
+  $("#btnVoiceText").onclick = function(){ cmd({op:"chat_voice", v:false}).then(poll); };
+  $("#btnVoiceSpeak").onclick = function(){ cmd({op:"chat_voice", v:true}).then(poll); };
+  $("#btnVoiceTest").onclick = function(){
+    var b = this; b.textContent = "试听中…";
+    cmd({op:"chat_voice_test"}).then(function(r){
+      if(r && r.ok === false){ $("#chatHint").textContent = r.ack || "板子连不上"; }
+      setTimeout(poll, 1200);
+    });
+    setTimeout(function(){ b.textContent = "试听一句"; }, 2500);
+  };
+
+  $("#btnDiagDump").onclick = function(){
+    this.textContent = "打包中…";
+    window.location.href = "/api/diag";
+    var b = this;
+    setTimeout(function(){ b.textContent = "导出诊断包"; }, 1200);
+  };
+  $("#btnPing").onclick = function(){
+    var t0 = performance.now();
+    cmd({op:"dsp", v:(st.dsp || "bypass")}).then(function(r){
+      var ms = Math.round(performance.now() - t0);
+      $("#pingOut").textContent = (r && r.ack) ? ("ack " + r.ack + " · " + ms + " ms") : "无回执";
+    });
+  };
+  function diagLine(ok, name, detail){
+    var color = ok ? "#248a3d" : "#c00";
+    return '<tr><td>' + name + '</td>' +
+           '<td class="num" style="color:var(--sub)">' + (detail || "—") + '</td>' +
+           '<td><b style="color:' + color + '">' + (ok ? "PASS" : "FAIL") + '</b></td></tr>';
+  }
+  function diagRender(rows, err){
+    var body = $("#diagBody");
+    if(err){ body.innerHTML = diagLine(false, "自检过程出错", String(err)); return; }
+    body.innerHTML = rows.length ? rows.join("")
+      : '<tr class="empty"><td colspan="3">还没有跑，点「运行自检」</td></tr>';
+  }
+  function wait(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+  $("#btnDiag").onclick = function(){
+    var rows = [];
+    diagRender([diagLine(true, "正在跑…", "")]);
+    $("#diagWhen").textContent = new Date().toTimeString().slice(0, 8);
+    api("/api/cmd", {op:"listen", v:true}).catch(function(){}).then(function(){ return wait(1200); })
+    .then(function(){ return api("/api/state"); })
+    .then(function(s){
+      var b = s.board || {};
+      rows.push(diagLine(!!b.online, "板子在线上报状态包", "age " + fmt(b.age, 2) + " s"));
+      rows.push(diagLine((s.packets || 0) > 0, "上行音频有包", "packets " + (s.packets || 0)));
+      return api("/api/cmd", {op:"dsp", v:"pl"});
+    })
+    .then(function(){ return wait(900); })
+    .then(function(){ return api("/api/state"); })
+    .then(function(s){
+      var m = (s.board || {}).mode;
+      rows.push(diagLine(m === "pl", "控制字 '3' 生效（切到 PL 谱减）", "板子回读 " + m));
+      return api("/api/cmd", {op:"dsp", v:"bypass"});
+    })
+    .then(function(){ return wait(700); })
+    .then(function(){ return api("/api/spectrum"); })
+    .then(function(sp){
+      rows.push(diagLine(!!sp.ready, "频谱仪有数据", "frames " + (sp.frames || 0)));
+      diagRender(rows);
+      poll();
+    })
+    .catch(function(e){ diagRender([], e); });
+  };
+
+  function fit(cv){
+    var r = window.devicePixelRatio || 1, w = cv.clientWidth || 600, h = cv.clientHeight || 120;
+    cv.width = Math.round(w * r); cv.height = Math.round(h * r);
+    var g = cv.getContext("2d"); g.setTransform(r,0,0,r,0,0);
+    return { g:g, w:w, h:h };
+  }
+  function drawBars(cv, bins, colors){
+    var o = fit(cv), g = o.g, w = o.w, h = o.h;
+    g.clearRect(0,0,w,h);
+    if(!bins || !bins.length){ return; }
+    var n = bins.length, bw = w / n;
+    // 固定绝对量程 −100..−20 dBFS。
+    // 曾经按"本帧峰值"归一：安静时底噪也被拉到满格，说话与不说话看起来一样高。
+    // 绝对量程下"安静=柱子矮、说话=柱子高"，不同时刻也能互相比；真超了 −20 才抬高顶端。
+    var mx = -140, i0;
+    for(i0=0;i0<n;i0++){ if(bins[i0] != null && bins[i0] > mx){ mx = bins[i0]; } }
+    var top = (mx > -20) ? Math.min(0, Math.ceil((mx + 3) / 10) * 10) : -20;
+    var bot = -100, span = top - bot;
+    for(var i=0;i<n;i++){
+      var v = (bins[i] == null) ? bot : bins[i];
+      var hh = Math.max(1, Math.min(h-2, (v - bot) / span * (h-4)));
+      var t = i / n;
+      g.fillStyle = colors ? colors(t) : "hsl(" + (200 - 120*t) + ",80%,58%)";
+      g.fillRect(i*bw + .5, h - hh, Math.max(1, bw-1.2), hh);
+    }
+  }
+  function drawFall(cv, rows){
+    var o = fit(cv), g = o.g, w = o.w, h = o.h;
+    g.clearRect(0,0,w,h);
+    if(!rows || !rows.length){ return; }
+    var R = rows.length, n = rows[0].length, cw = w/n, rh = h/R;
+    for(var r=0;r<R;r++){
+      for(var c=0;c<n;c++){
+        var v = (rows[r][c] == null) ? -120 : rows[r][c];
+        var t = Math.max(0, Math.min(1, (v + 110) / 110));
+        g.fillStyle = "hsl(" + (220 - 200*t) + ",85%," + (10 + 55*t) + "%)";
+        g.fillRect(c*cw, (R-1-r)*rh, cw+0.6, rh+0.6);
+      }
+    }
+  }
+
+  function pollSpec(){
+    api("/api/spectrum").then(function(sp){
+      if(!sp){ return; }
+      if(typeof sp.rms_dbfs === "number"){ $("#vRms").innerHTML = fmt(sp.rms_dbfs,1) + "<small>dBFS</small>"; }
+      if(!frozen){ $("#specRate").textContent = sp.ready ? "实时" : "未收听（没有数据）"; }
+      $("#specHint").textContent = sp.ready ? "实时" : "未收听（没有数据）";
+      if(!sp.ready || !sp.bins || !sp.bins.length){ return; }
+      if($("#p-recv").classList.contains("on")){ drawBars($("#cvMini"), sp.bins); }
+      if($("#p-meas").classList.contains("on") && !frozen){
+        drawBars($("#mxSpec"), sp.bins, function(t){ return "hsl(" + (200 - 190*t) + ",88%," + (62 - 12*t) + "%)"; });
+        if(sp.waterfall){ drawFall($("#mxFall"), sp.waterfall); }
+      }
+      $("#mRms").textContent = fmt(sp.rms_dbfs,1) + " dBFS";
+      $("#mPk").textContent = sp.peak_hz ? (sp.peak_hz >= 1000 ? (sp.peak_hz/1000).toFixed(2)+" kHz" : Math.round(sp.peak_hz)+" Hz") : "—";
+      $("#mPeakHz").textContent = sp.peak_hz ? (Math.round(sp.peak_hz) + " Hz") : "—";
+      $("#mFloor").textContent = fmt(sp.floor_db,1) + " dBFS";
+      $("#mSnr").textContent = fmt(sp.snr_db,1) + " dB";
+      $("#mThd").textContent = (sp.thd_pct == null) ? "—" : (fmt(sp.thd_pct,2) + " %");
+      // band_* 已经是百分数（0..100）：再乘 100 会显示 10000%（2026-11-02 截图抓到）
+    $("#mLo").textContent = (sp.band_low == null ? "—" : Math.round(sp.band_low) + " %");
+      $("#mMid").textContent = (sp.band_mid == null ? "—" : Math.round(sp.band_mid) + " %");
+      $("#mHi").textContent = (sp.band_high == null ? "—" : Math.round(sp.band_high) + " %");
+      $("#mClip").textContent = (sp.clip == null ? "—" : sp.clip);
+  var lu = (sp.loud && sp.loud.m != null) ? (fmt(sp.loud.m,1) + " LUFS") : "—";
+  $("#mLufs").textContent = lu;
+  var pd = (sp.peak_db == null) ? "—" : (fmt(sp.peak_db,1) + " dBFS");
+  if($("#mPeakDb")) $("#mPeakDb").textContent = pd;    }).catch(function(){});
+  }
+
+  function pollWave(){
+    fetch("/api/pcm").then(function(r){ return r.arrayBuffer(); }).then(function(buf){
+      if(!buf || buf.byteLength < 64){ return; }
+      var cv = $("#cvWave"); if(!cv) return;
+      var dv = new DataView(buf), n = Math.floor(buf.byteLength / 4);
+      var o = fit(cv), g = o.g, w = o.w, h = o.h;
+      g.clearRect(0,0,w,h);
+      var step = Math.max(1, Math.floor(n / w));
+      g.strokeStyle = "#30d158"; g.lineWidth = 1.4; g.beginPath();
+      for(var i=0, x=0; i<n; i+=step, x++){
+        var l = dv.getInt16(i*4, true) / 32768;
+        g.lineTo(x, h/2 - l * (h/2 - 4));
+      }
+      g.stroke();
+    }).catch(function(){});
+  }
+
+  /* 条幅有两种：板子真的离线 / 控制台后端连不上（服务重启的那两三秒）。
+     后者以前表现为"红条冻住不再消失"，因为 poll 拿不到 state 就直接 return 了。 */
+  var BAR_OFF = '<b>板子离线</b><span>控制字发不出去、上行音频也收不到。先确认：板子上电、网线插在 Zynq 的 RJ45（不是路由器）、PC 这块网口出现 169.254.191.246。板子在线后本页自动解除置灰。</span>';
+  var BAR_SRV = '<b>控制台后端连不上</b><span>这台 PC 上的控制台服务正在重启或已退出。几秒后自动重连；若一直这样，重新运行 <code>python run_web.py</code>。</span>';
+  var barKind = "", barOffCount = 0;
+  function setBar(kind){
+    var bar = document.getElementById("offBar");
+    if(!bar){ return; }
+    if(kind !== barKind){
+      barKind = kind;
+      if(kind === "off"){ bar.innerHTML = BAR_OFF; }
+      else if(kind === "srv"){ bar.innerHTML = BAR_SRV; }
+    }
+    if(!kind){ bar.hidden = true; bar.style.display = "none"; bar.dataset.kind = ""; return; }
+    bar.dataset.kind = kind;
+    bar.hidden = false; bar.style.display = "flex";
+  }
+  window.__setBar = setBar;
+
+  function poll(){
+    api("/api/state").then(function(s){
+      if(!s){ setBar("srv"); return; }
+      st.listen = !!s.listening; st.fx = s.fx || {}; st.loop = s.loop || null; st.voc = s.voc || null;
+      st.enh = !!s.enh_on;
+      st.ab = s.ab || {running:false, rows:[]};
+      st.chat = s.chat || {busy:false, voice:false, log:[]};
+      st.dac = (s.dac && typeof s.dac.mode === "number") ? s.dac.mode : 0;
+      var b = s.board || {}, on = !!b.online;
+      // paintRxNote() 要用，之前从没写进 st，导致它一直以为板子离线
+      st.board = b; st.packets = s.packets || 0; st.link = s.link || "";
+      $("#led").className = "led " + (on ? "ok" : "bad");
+      $("#tbState").textContent = on ? ("板子在线 · " + fmt(s.fps,1) + " fps") : "板子未连接";
+      $("#bFps").textContent = on ? fmt(s.fps,1) : "—";
+      window.__st = st;
+      paintRxNote();
+  $("#btnListen").textContent = st.listen ? "停止收听" : "开始收听";
+      $("#btnListen").className = "btn " + (st.listen ? "on" : "primary");
+      $("#listenHint").textContent = st.listen ? "收听中" : "未收听";
+      $("#vFps").innerHTML = fmt(s.fps,1) + "<small>fps</small>";
+      $("#vRms").innerHTML = fmt(s.dbfs,1) + "<small>dBFS</small>";
+      $("#vPkt").textContent = (s.packets||0) + " / " + (s.under||0);
+      var cur = s.dsp || null;
+      $$("#dspSeg button").forEach(function(x){ x.classList.toggle("on", x.dataset.dsp === cur); });
+      $("#dspSrc").textContent = (s.dsp_source === "board") ? "板子回读" : "本机意图";
+      if(b.ts_rate != null){ $("#ts").value = b.ts_rate; $("#tsV").textContent = b.ts_rate + "%"; }
+      if(b.gain != null){
+        var db = Math.round(20*Math.log10(b.gain/32768));
+        $("#gainV").textContent = db + " dB";
+        $$("[data-gain]").forEach(function(x){ x.classList.toggle("on", Math.abs(parseInt(x.dataset.gain,10) - db) < 0.6); });
+      }
+      // 底噪：状态包 v2 起板子自报，界面显示真值；来源标在括号里，
+      // 免得又把"本机意图"当成"板子已经这样了"。
+      var nz = (typeof s.noise === "number") ? s.noise : null;
+      if (nz !== null) {
+        var isB = (s.noise_source === "board");
+        // 噪声会不会经过降噪，取决于注入点：PL 档在谱减之前（会），其它档在板子之后（不会）。
+        // 长句子塞进 .val 会把这一行挤成四行、把整张卡撑高，所以做成一个小徽标 + title。
+        var thru = (b.mode === "pl");
+        var chip = "";
+        if (nz > 0) {
+          chip = thru
+            ? '<i class="wchip ok" title="底噪在 PL 里、谱减之前注入，会被降噪压掉">✓</i>'
+            : '<i class="wchip" title="底噪在板子内部处理完之后才注入，会盖在降噪结果上">⚠</i>';
+        }
+        $("#noiseV").innerHTML = nz + (isB ? " 板" : " 本机") + chip;
+        $$("[data-noise]").forEach(function (x) {
+          x.classList.toggle("on", parseInt(x.dataset.noise, 10) === nz);
+        });
+      }
+      var latOn = !(b.lat_off);
+      $("#latV").textContent = latOn ? ((b.dly_frames || 0) + " 帧") : "关";
+      $("#btnLatOff").className = "btn " + (latOn ? "" : "on");
+      $$("[data-lag]").forEach(function(x){
+        x.classList.toggle("on", latOn && b.dly_frames != null && parseInt(x.dataset.lag,10) === b.dly_frames);
+      });
+      $("#iOnline").textContent = on ? "是" : "否"; $("#iOnline").className = on ? "ok" : "";
+      $("#iMode").textContent = s.dsp_name || b.mode || "—";
+      $("#iTs").textContent = (b.ts_rate != null ? b.ts_rate + "%" : "—");
+      $("#iGain").textContent = (b.gain != null ? b.gain : "—");
+      $("#iStat").textContent = (b.age != null ? fmt(b.age,2) + " s 前" : "—");
+      if (window.__toneSync) { window.__toneSync(!!b.tone); }   /* 测试音以板子回读为准 */
+      if (!st.listen && window.__stopPlay) { window.__stopPlay(); }   /* 没在收听就别空转 */
+      // 板子离线：所有"要发控制字/要收包"的控件都点了没效果，必须当场说清楚，
+      // 否则用户看到的就是"点了没反应"。模拟源不算（它不依赖板子）。
+      // 上行音频在流本身就说明板子活着（状态包偶尔会漏、重烧时会断几秒），别只信 50508
+      var alive = on || (s.packets > 0 && s.link === "ok");
+      var off = !alive && !s.sim;
+      // 去抖：重烧板子会断 1~2 秒，那不该弹红条吓人；连续 3 次（≈1.5 s）才算真离线
+      if (off) { barOffCount++; } else { barOffCount = 0; }
+      setBar(off && barOffCount >= 3 ? "off" : "");
+      $$("#dspSeg, [data-noise], [data-gain], [data-lag], #btnLatOff, [data-dac], #btnTone,"
+        + " #btnPush, #btnPushStop, #btnLoop, #btnLoopOnly, #btnPing, #btnAB").forEach(function (x) {
+        if (!x) { return; }
+        // 模拟信号在跑时，降噪/增益这些仍然没有意义（板子没在跑），一起灰掉
+        x.classList.toggle("dis", off);
+      });
+      $("#btnListen").classList.remove("dis");
+
+      var fx = st.fx;
+      $("#btnFx").className = "btn " + (fx.on ? "on" : "");
+      $("#fxHint").textContent = fx.on ? ("已开启 · " + (fx.preset_text || fx.preset || "")) : "关闭";
+      $$("[data-fx]").forEach(function(x){ x.classList.toggle("on", !!fx.on && fx.preset === x.dataset.fx); });
+
+      // C3：音效关着的时候，预设与真峰值这两组按钮点了也不会有变化，
+      // 统一用离线那套 .dis（半透明 + 不响应鼠标），不再另造 disabled 样式
+      $$("[data-fx]").forEach(function (x) { x.classList.toggle("dis", !fx.on); });
+      $$("[data-tp]").forEach(function (x) { x.classList.toggle("dis", !fx.on); });
+      var nOn = !!(fx.norm && fx.norm.on);
+      $("#btnNorm").className = "btn " + (nOn ? "on" : "");
+      $("#btnNorm").textContent = nOn ? "已开启" : "关闭";
+      var tgt = (fx.tp && fx.tp.target != null) ? fx.tp.target : null;
+      $$("[data-tp]").forEach(function(x){ x.classList.toggle("on", tgt != null && Math.abs(parseFloat(x.dataset.tp) - tgt) < .01); });
+      // 没数据也要写 "— dBTP"：原来只在有值时写，会留着上一轮的半截数字
+      $("#tpV").textContent = fmt(fx.tp ? fx.tp.tp_db : null, 2) + " dBTP";
+      var cf = (fx.crossfeed && fx.crossfeed.on) ? fx.crossfeed.amount : 0;
+      $$("[data-cf]").forEach(function(x){ x.classList.toggle("on", Math.abs(parseFloat(x.dataset.cf) - (cf||0)) < .01); });
+      $("#cfV").textContent = cf ? Number(cf).toFixed(2) : "关";
+      var calOn = !!(fx.cal && fx.cal.on);
+      $("#btnCal").className = "btn " + (calOn ? "on" : "");
+      $("#calV").textContent = calOn ? "已加载（左/右各修一半）" : "未加载";
+      $$("[data-dac]").forEach(function(x){ x.classList.toggle("on", parseInt(x.dataset.dac,10) === st.dac); });
+      var dn = (s.dac && s.dac.name) ? s.dac.name : (["M0 同源","M1 左右分离","M2 外接独占"][st.dac] || "—");
+      var dsrc = (s.dac && s.dac.source === "board") ? "板子回读" : "本机意图";
+      $("#dacHint").textContent = dn + " · " + dsrc; $("#iDac").textContent = dn;
+      var iSrc = $("#iDacSrc"); if (iSrc) { iSrc.textContent = dsrc; }
+      st.sim = !!s.sim;
+      /* 听不到声音时，先把「为什么」写出来：没开收听 / 板子没上行音频 / 只有静音 */
+  function paintRxNote(){
+    var n = document.getElementById("rxNote");
+    if(!n){ return; }
+    var ps = window.__playStat || {};
+    var txt = "", bad = false;
+    if(!st.listen && !st.sim){
+      txt = "";                                        /* 没打算听，不用提示 */
+    } else if(st.sim){
+      txt = "模拟信号源：播放的是控制台自己生成的 440 Hz + 噪声，不需要板子。";
+    } else if(!((st.board && st.board.online) || (st.packets > 0 && st.link === "ok"))){
+      txt = "板子离线：状态包都收不到，先查网线和板子电源。"; bad = true;
+    } else if(!(st.packets > 0)){
+      txt = "已开始收听，但板子没有上行音频（上行包数 0）—— 网线插的是 Zynq 的 RJ45 吗？麦克风 DMA 起来了吗？";
+      bad = true;
+    } else if(ps.state === "suspended"){
+      txt = "浏览器的自动播放策略把声音按住了：点一下页面任意位置即可。"; bad = true;
+    }
+    n.textContent = txt;
+    n.style.display = txt ? "block" : "none";
+    n.style.color = bad ? "#c0271a" : "var(--sub)";
+  }
+  window.__paintRxNote = paintRxNote;
+
+  var bSim = $("#btnSim");
+      if (bSim) { bSim.textContent = st.sim ? "停止模拟" : "模拟信号源"; bSim.classList.toggle("on", st.sim); }
+      var lo = st.loop;
+      $("#loopHint").textContent = (lo && lo.on) ? "同步中" : "已停止";
+      if ($("#loopV")) { $("#loopV").textContent = (lo && lo.on) ? ((lo.blocks||0) + " 块") : "—"; }
+      if ($("#pushV2")) {
+        var ps = s.push || {on: !!s.pushing};
+        $("#pushV2").textContent = (ps.on || s.pushing) ? "推流中" : "—";
+      }
+      $("#btnLoop").className = "btn " + ((lo && lo.on) ? "on" : "");
+      var v = st.voc;
+      $("#btnVoc").className = "btn " + ((v && v.on) ? "on" : "");
+      if(v){ $("#vocV").textContent = (v.on ? "开" : "关") + " · " + fmt(v.ms_per_frame,2) + " ms/帧 · 浊音 " + Math.round((v.voice_ratio||0)*100) + "%"; }
+      $("#btnEnh").className = "btn " + (st.enh ? "on" : "");
+  $("#btnEnh2").className = "btn " + (st.enh ? "on" : "");
+  $("#btnEnh2").textContent = st.enh ? "开启" : "关闭";
+  if (s.enh && typeof s.enh.strength === "number") {
+    $("#enhStr2").value = s.enh.strength;
+    $("#enhV2").textContent = "强度 " + s.enh.strength;
+  }
+      abPaint();
+  chatRender();
+  $("#enhHint").textContent = st.enh ? "开启" : "关闭";
+      $("#sBoardIp").textContent = s.board_ip || "—";
+      $("#sPcIp").textContent = s.pc_ip || "—";
+      var ev = (s.events || []).slice(-6).reverse();
+      $("#evList").innerHTML = ev.length ? ev.map(function(e){
+        var t = e.t ? String(e.t).slice(11,16) : "";
+        return "<div>" + t + " " + (e.msg || "") + "</div>";
+      }).join("") : "—";
+    }).catch(function(){});
+  }
+
+  setInterval(poll, 500);
+  setInterval(function(){
+    if($("#p-meas").classList.contains("on") || $("#p-recv").classList.contains("on")){ pollSpec(); }
+  }, 250);
+  setInterval(function(){ if($("#p-recv").classList.contains("on")){ pollWave(); } }, 120);
+  poll(); pollSpec(); pollWave();
+})();
+
+/* ================= 实时播放（WebAudio）与 440 Hz 切换 =================
+   起因：新界面重写时把旧版的 /api/pcm 拉流播放弄丢了 —— 点"开始收听"只有板子在发，
+   电脑上没声音；440 Hz 也只会发 v:true，开了关不掉。这里把两件事补回来。 */
+(function () {
+  var actx = null, gainNode = null, playTimer = null;
+  var ph = 0, rdIdx = 0, underruns = 0, look = 0.06, clean = 0;
+  var LOOK_MIN = 0.05, LOOK_MAX = 0.25;
+
+  function volEl() { return document.getElementById("vol"); }
+  function volVal() { var e = volEl(); return e ? (+e.value) / 100 : 0.8; }
+
+  function ensureAudio() {
+    if (!actx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      actx = new AC();
+      gainNode = actx.createGain();
+      gainNode.gain.value = volVal();
+      gainNode.connect(actx.destination);
+    }
+    if (actx.state === "suspended") actx.resume();
+    return actx;
+  }
+
+  async function pump() {
+    if (!actx) return;
+    if (actx.state === "suspended") {           /* 浏览器自动播放策略会按住它，每 tick 试一次恢复 */
+      try { await actx.resume(); } catch (e) {}
+    }
+    if (actx.state !== "running") { window.__playStat = { state: actx.state, look: look, underruns: underruns }; return; }
+    var r;
+    try { r = await fetch("/api/pcm?from=" + rdIdx); } catch (e) { return; }
+    var cnt = +(r.headers.get("X-Pcm-Count") || 0);
+    var total = r.headers.get("X-Pcm-Total");
+    if (total != null && rdIdx > (+total)) {     /* 重新开始收听 -> pcm_total 归零，游标必须跟着回退 */
+      rdIdx = +total;
+      return;
+    }
+    if (!cnt) return;
+    var start = +(r.headers.get("X-Pcm-Start") || 0);
+    var i16 = new Int16Array(await r.arrayBuffer());
+    var n = cnt, now = actx.currentTime, resynced = false;
+    if (start !== rdIdx || ph < now + 0.005) {          /* 丢块或播放头落后 -> 重新起跳 */
+      if (ph && ph < now) { underruns++; look = Math.min(LOOK_MAX, look + 0.03); }
+      ph = now + look; resynced = true; clean = 0;
+    }
+    var ab = actx.createBuffer(2, n, 48000);
+    var L = ab.getChannelData(0), R = ab.getChannelData(1);
+    for (var i = 0; i < n; i++) { L[i] = i16[2 * i] / 32768; R[i] = i16[2 * i + 1] / 32768; }
+    var src = actx.createBufferSource();
+    src.buffer = ab; src.connect(gainNode); src.start(ph);
+    ph += n / 48000; rdIdx = start + n;
+    if (!resynced) {
+      clean += n / 48000;
+      if (clean > 3 && look > LOOK_MIN) { look = Math.max(LOOK_MIN, look - 0.005); clean = 0; }
+    }
+    window.__playStat = { state: actx.state, look: look, underruns: underruns, rdIdx: rdIdx, n: n };
+  }
+
+  async function startPlay() {
+    ensureAudio();
+    ph = 0; underruns = 0; look = 0.06; clean = 0;
+    try {                                     /* 从"最新样本"起播，避免先追旧缓冲 */
+      var st = await (await fetch("/api/state")).json();
+      rdIdx = st.pcm_total || 0;
+    } catch (e) { rdIdx = 0; }
+    if (playTimer) clearInterval(playTimer);
+    playTimer = setInterval(pump, 40);
+  }
+
+  function stopPlay() {
+    if (playTimer) clearInterval(playTimer);
+    playTimer = null; ph = 0;
+  }
+
+  window.__startPlay = startPlay;
+
+  /* 已在收听的状态下刷新页面：浏览器不许无手势起播，所以等用户第一次点页面时补上 */
+  document.addEventListener("pointerdown", function once() {
+    document.removeEventListener("pointerdown", once, true);
+    if (window.__st && window.__st.listen) { startPlay(); }
+  }, true);
+  window.__stopPlay = stopPlay;
+
+  /* 音量滑杆 */
+  var v = volEl();
+  if (v) {
+    v.oninput = function () {
+      document.getElementById("volV").textContent = v.value + "%";
+      if (gainNode) gainNode.gain.value = volVal();
+    };
+  }
+
+  /* 开始/停止收听：命令照旧发，同时起停播放引擎 */
+  var bListen = document.getElementById("btnListen");
+  if (bListen) {
+    var oldListen = bListen.onclick;
+    bListen.onclick = async function () {
+      /* 无条件起播：startPlay 幂等（清旧 timer、重设 rdIdx）。
+         停止由"停止收听"那条命令自己负责 —— 判别当前状态只能看旧快照，不可靠。 */
+      await startPlay();
+      if (oldListen) oldListen.call(bListen);
+    };
+  }
+  var bSimStop = document.getElementById("btnSimStop");
+  if (bSimStop) {
+    var oldSim = bSimStop.onclick;
+    bSimStop.onclick = function () { stopPlay(); if (oldSim) oldSim.call(bSimStop); };
+  }
+
+  /* 440 Hz 是切换：本地记状态，发 on/off */
+  var toneOn = false, bTone = document.getElementById("btnTone");
+  function paintTone() {
+    if (!bTone) return;
+    bTone.textContent = toneOn ? "关闭 440 Hz 测试音" : "440 Hz 测试音";
+    bTone.classList.toggle("on", toneOn);
+  }
+  /* 状态每刷一次就用板子回读校正本地状态（否则首次点击会和板子错相） */
+  window.__toneSync = function (on) { toneOn = !!on; paintTone(); };
+  if (bTone) {
+    bTone.onclick = function () {
+      toneOn = !toneOn;
+      paintTone();
+      fetch("/api/cmd", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ op: "tone", v: toneOn })
+      });
+    };
+  }
+})();
+
+</script>
+</body>
+</html>

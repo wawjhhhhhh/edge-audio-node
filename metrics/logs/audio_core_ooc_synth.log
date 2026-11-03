@@ -1,0 +1,400 @@
+
+*** Running vivado
+    with args -log eth_audio_audio_axis_core_0_0.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source eth_audio_audio_axis_core_0_0.tcl
+
+
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 14-oct-2027.
+#-----------------------------------------------------------
+# Vivado v2026.1 (64-bit)
+# SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+# IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+# SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+# Start of session at: Tue Nov  3 00:12:01 2026
+# Process ID         : 43836
+# Current directory  : D:/vivado_tmp/eth_audio_prj/eth_audio.runs/eth_audio_audio_axis_core_0_0_synth_1
+# Command line       : vivado.exe -log eth_audio_audio_axis_core_0_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source eth_audio_audio_axis_core_0_0.tcl
+# Log file           : D:/vivado_tmp/eth_audio_prj/eth_audio.runs/eth_audio_audio_axis_core_0_0_synth_1/eth_audio_audio_axis_core_0_0.vds
+# Journal file       : D:/vivado_tmp/eth_audio_prj/eth_audio.runs/eth_audio_audio_axis_core_0_0_synth_1\vivado.jou
+# Running On         : LAPTOP-6TJD1457
+# Platform           : Windows 11
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 9 8945H w/ Radeon 780M Graphics      
+# CPU Frequency      : 3992 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 16
+# Host memory        : 16419 MB
+# Swap memory        : 18938 MB
+# Total Virtual      : 35357 MB
+# Available Virtual  : 5351 MB
+#-----------------------------------------------------------
+
+****** Vivado v2026.1 (64-bit)
+  **** SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+  **** IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+  **** SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+  **** Start of session at: Tue Nov  3 00:12:01 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source eth_audio_audio_axis_core_0_0.tcl -notrace
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'D:/xilinx/2026.1/2026.1/Vivado/data/ip'.
+Command: synth_design -top eth_audio_audio_axis_core_0_0 -part xc7z020clg400-2 -incremental_mode off -mode out_of_context
+Starting synth_design
+Attempting to get a license for feature 'Vivado_Synthesis' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Vivado_Synthesis' and/or device 'xc7z020'
+INFO: [Device 21-403] Loading part xc7z020clg400-2
+INFO: [Designutils 20-5008] Incremental synthesis strategy off
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 8212
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1510.977 ; gain = 575.859
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'eth_audio_audio_axis_core_0_0' [d:/vivado_tmp/eth_audio_prj/eth_audio.gen/sources_1/bd/eth_audio/ip/eth_audio_audio_axis_core_0_0/synth/eth_audio_audio_axis_core_0_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'audio_axis_core' [D:/deepseek herness/work/eth_audio/rtl/audio_axis_core.v:23]
+	Parameter WL bound to: 16 - type: integer 
+	Parameter BEATS_PER_PKT bound to: 480 - type: integer 
+	Parameter LOOPBACK bound to: 0 - type: integer 
+	Parameter AW bound to: 9 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:19]
+INFO: [Synth 8-6157] synthesizing module 'MMCME2_BASE' [D:/xilinx/2026.1/2026.1/Vivado/scripts/rt/data/unisim_comp.v:95844]
+	Parameter BANDWIDTH bound to: OPTIMIZED - type: string 
+	Parameter CLKFBOUT_MULT_F bound to: 2.400000e+01 - type: double 
+	Parameter CLKFBOUT_PHASE bound to: 0.000000e+00 - type: double 
+	Parameter CLKIN1_PERIOD bound to: 2.000000e+01 - type: double 
+	Parameter CLKOUT0_DIVIDE_F bound to: 9.762500e+01 - type: double 
+	Parameter CLKOUT0_DUTY_CYCLE bound to: 5.000000e-01 - type: double 
+	Parameter CLKOUT0_PHASE bound to: 0.000000e+00 - type: double 
+	Parameter DIVCLK_DIVIDE bound to: 1 - type: integer 
+	Parameter REF_JITTER1 bound to: 1.000000e-02 - type: double 
+	Parameter STARTUP_WAIT bound to: FALSE - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'MMCME2_BASE' (0#1) [D:/xilinx/2026.1/2026.1/Vivado/scripts/rt/data/unisim_comp.v:95844]
+WARNING: [Synth 8-7071] port 'CLKFBOUTB' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT0B' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT1' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT1B' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT2' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT2B' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT3' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT3B' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT4' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT5' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7071] port 'CLKOUT6' of module 'MMCME2_BASE' is unconnected for instance 'u_mmcm' [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+WARNING: [Synth 8-7023] instance 'u_mmcm' of module 'MMCME2_BASE' has 18 connections declared, but only 7 given [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:39]
+INFO: [Synth 8-6157] synthesizing module 'BUFG' [D:/xilinx/2026.1/2026.1/Vivado/scripts/rt/data/unisim_comp.v:2678]
+INFO: [Synth 8-6155] done synthesizing module 'BUFG' (0#1) [D:/xilinx/2026.1/2026.1/Vivado/scripts/rt/data/unisim_comp.v:2678]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [D:/deepseek herness/work/eth_audio/rtl/clk_wiz_0.v:19]
+INFO: [Synth 8-6157] synthesizing module 'slave_signal_gen' [D:/deepseek herness/work/eth_audio/rtl/slave_signal_gen.v:19]
+INFO: [Synth 8-6155] done synthesizing module 'slave_signal_gen' (0#1) [D:/deepseek herness/work/eth_audio/rtl/slave_signal_gen.v:19]
+INFO: [Synth 8-6157] synthesizing module 'audio_config' [D:/deepseek herness/work/eth_audio/rtl/audio_config.v:18]
+	Parameter WL bound to: 16 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'i2c_reg_cfg' [D:/deepseek herness/work/eth_audio/rtl/i2c_reg_cfg.v:19]
+	Parameter WL bound to: 16 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'i2c_reg_cfg' (0#1) [D:/deepseek herness/work/eth_audio/rtl/i2c_reg_cfg.v:19]
+INFO: [Synth 8-6157] synthesizing module 'i2c_dri' [D:/deepseek herness/work/eth_audio/rtl/i2c_dri.v:18]
+	Parameter SLAVE_ADDR bound to: 7'b0010000 
+	Parameter CLK_FREQ bound to: 26'b10111110101111000010000000 
+	Parameter I2C_FREQ bound to: 18'b111101000010010000 
+INFO: [Synth 8-155] case statement is not full and has no default [D:/deepseek herness/work/eth_audio/rtl/i2c_dri.v:192]
+INFO: [Synth 8-6155] done synthesizing module 'i2c_dri' (0#1) [D:/deepseek herness/work/eth_audio/rtl/i2c_dri.v:18]
+WARNING: [Synth 8-689] width (8) of port connection 'i2c_addr' does not match port width (16) of module 'i2c_dri' [D:/deepseek herness/work/eth_audio/rtl/audio_config.v:72]
+INFO: [Synth 8-6155] done synthesizing module 'audio_config' (0#1) [D:/deepseek herness/work/eth_audio/rtl/audio_config.v:18]
+INFO: [Synth 8-6157] synthesizing module 'audio_receive' [D:/deepseek herness/work/eth_audio/rtl/audio_receive.v:19]
+	Parameter WL bound to: 16 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'audio_receive' (0#1) [D:/deepseek herness/work/eth_audio/rtl/audio_receive.v:19]
+INFO: [Synth 8-6157] synthesizing module 'afifo' [D:/deepseek herness/work/audio_axis/rtl/afifo.v:19]
+	Parameter DW bound to: 32 - type: integer 
+	Parameter AW bound to: 9 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'afifo' (0#1) [D:/deepseek herness/work/audio_axis/rtl/afifo.v:19]
+INFO: [Synth 8-6155] done synthesizing module 'audio_axis_core' (0#1) [D:/deepseek herness/work/eth_audio/rtl/audio_axis_core.v:23]
+INFO: [Synth 8-6155] done synthesizing module 'eth_audio_audio_axis_core_0_0' (0#1) [d:/vivado_tmp/eth_audio_prj/eth_audio.gen/sources_1/bd/eth_audio/ip/eth_audio_audio_axis_core_0_0/synth/eth_audio_audio_axis_core_0_0.v:53]
+WARNING: [Synth 8-7137] Register mem_reg in module afifo has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [D:/deepseek herness/work/audio_axis/rtl/afifo.v:62]
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'mem_reg' since this is dissolved into (16384) registers bits. Consider modifying RTL as per supported RAM templates
+INFO: [Synth 8-7129] Port s_axis_tlast in module audio_axis_core is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1696.203 ; gain = 761.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1696.203 ; gain = 761.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1696.203 ; gain = 761.086
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.366 . Memory (MB): peak = 1696.203 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 1 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.024 . Memory (MB): peak = 1747.707 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 1 instances were transformed.
+  MMCME2_BASE => MMCME2_ADV: 1 instance 
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.646 . Memory (MB): peak = 1748.676 ; gain = 0.000
+INFO: [Designutils 20-5008] Incremental synthesis strategy off
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 1748.676 ; gain = 813.559
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7z020clg400-2
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 1748.676 ; gain = 813.559
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 1748.676 ; gain = 813.559
+---------------------------------------------------------------------------------
+INFO: [Synth 8-802] inferred FSM for state register 'cur_state_reg' in module 'i2c_dri'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 st_idle |                         00000001 |                         00000001
+               st_sladdr |                         00000010 |                         00000010
+               st_addr16 |                         00000100 |                         00000100
+                st_addr8 |                         00001000 |                         00001000
+              st_data_wr |                         00010000 |                         00010000
+              st_addr_rd |                         00100000 |                         00100000
+              st_data_rd |                         01000000 |                         01000000
+                 st_stop |                         10000000 |                         10000000
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'cur_state_reg' using encoding 'one-hot' in module 'i2c_dri'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:22 ; elapsed = 00:00:23 . Memory (MB): peak = 1748.676 ; gain = 813.559
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   32 Bit       Adders := 1     
+	   2 Input   16 Bit       Adders := 1     
+	   2 Input   11 Bit       Adders := 1     
+	   2 Input   10 Bit       Adders := 9     
+	   2 Input    8 Bit       Adders := 2     
+	   2 Input    7 Bit       Adders := 1     
+	   2 Input    6 Bit       Adders := 1     
+	   2 Input    5 Bit       Adders := 2     
++---XORs : 
+	   2 Input     10 Bit         XORs := 4     
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               32 Bit    Registers := 1026  
+	               16 Bit    Registers := 6     
+	               11 Bit    Registers := 1     
+	               10 Bit    Registers := 17    
+	                8 Bit    Registers := 5     
+	                7 Bit    Registers := 1     
+	                6 Bit    Registers := 3     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 2     
+	                2 Bit    Registers := 2     
+	                1 Bit    Registers := 20    
++---Muxes : 
+	   2 Input   32 Bit        Muxes := 1     
+	   2 Input   16 Bit        Muxes := 1     
+	   2 Input    8 Bit        Muxes := 11    
+	   8 Input    8 Bit        Muxes := 2     
+	   2 Input    7 Bit        Muxes := 5     
+	   6 Input    7 Bit        Muxes := 1     
+	   8 Input    7 Bit        Muxes := 1     
+	   2 Input    6 Bit        Muxes := 1     
+	   2 Input    5 Bit        Muxes := 2     
+	   2 Input    1 Bit        Muxes := 43    
+	  30 Input    1 Bit        Muxes := 1     
+	  31 Input    1 Bit        Muxes := 6     
+	  29 Input    1 Bit        Muxes := 6     
+	  22 Input    1 Bit        Muxes := 6     
+	   6 Input    1 Bit        Muxes := 5     
+	  33 Input    1 Bit        Muxes := 4     
+	   8 Input    1 Bit        Muxes := 13    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 220 (col length:60)
+BRAMs: 280 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[15] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[14] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[13] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[12] driven by constant 1
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[11] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[10] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[9] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[8] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[7] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[6] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[5] driven by constant 1
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[4] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[3] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[2] driven by constant 0
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[1] driven by constant 1
+INFO: [Synth 8-3917] design eth_audio_audio_axis_core_0_0 has port gpio_word[0] driven by constant 0
+INFO: [Synth 8-7129] Port s_axis_tlast in module eth_audio_audio_axis_core_0_0 is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:34 ; elapsed = 00:00:35 . Memory (MB): peak = 1814.820 ; gain = 879.703
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+ROM: Preliminary Mapping Report
++-------------+-------------------+---------------+----------------+
+|Module Name  | RTL Object        | Depth x Width | Implemented As | 
++-------------+-------------------+---------------+----------------+
+|i2c_dri      | scl               | 64x1          | LUT            | 
+|i2c_dri      | scl               | 64x1          | LUT            | 
+|i2c_dri      | sda_out           | 64x1          | LUT            | 
+|audio_config | u_i2c_dri/scl     | 64x1          | LUT            | 
+|audio_config | u_i2c_dri/scl     | 64x1          | LUT            | 
+|audio_config | u_i2c_dri/sda_out | 64x1          | LUT            | 
++-------------+-------------------+---------------+----------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:34 ; elapsed = 00:00:36 . Memory (MB): peak = 1814.820 ; gain = 879.703
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 1830.270 ; gain = 895.152
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+CRITICAL WARNING: [Synth 8-5799] Converted tricell instance 'insti_16638' to logic
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:45 ; elapsed = 00:00:46 . Memory (MB): peak = 2044.152 ; gain = 1109.035
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:45 ; elapsed = 00:00:47 . Memory (MB): peak = 2044.152 ; gain = 1109.035
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:47 ; elapsed = 00:00:48 . Memory (MB): peak = 2044.152 ; gain = 1109.035
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:47 ; elapsed = 00:00:49 . Memory (MB): peak = 2044.152 ; gain = 1109.035
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:47 ; elapsed = 00:00:49 . Memory (MB): peak = 2044.152 ; gain = 1109.035
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:47 ; elapsed = 00:00:49 . Memory (MB): peak = 2044.152 ; gain = 1109.035
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+------------+------+
+|      |Cell        |Count |
++------+------------+------+
+|1     |BUFG        |     1|
+|2     |CARRY4      |    31|
+|3     |LUT1        |    94|
+|4     |LUT2        |   202|
+|5     |LUT3        |    90|
+|6     |LUT4        |   263|
+|7     |LUT5        |   812|
+|8     |LUT6        |  9077|
+|9     |MMCME2_BASE |     1|
+|10    |MUXF7       |  4357|
+|11    |MUXF8       |  2049|
+|12    |FDCE        |   924|
+|13    |FDPE        |     8|
+|14    |FDRE        | 32768|
++------+------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:47 ; elapsed = 00:00:49 . Memory (MB): peak = 2044.152 ; gain = 1109.035
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 1 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:34 ; elapsed = 00:00:43 . Memory (MB): peak = 2044.152 ; gain = 1056.562
+Synthesis Optimization Complete : Time (s): cpu = 00:00:47 ; elapsed = 00:00:49 . Memory (MB): peak = 2059.777 ; gain = 1109.035
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.436 . Memory (MB): peak = 2059.777 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 6438 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.024 . Memory (MB): peak = 2199.758 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 1 instances were transformed.
+  MMCME2_BASE => MMCME2_ADV: 1 instance 
+
+Synth Design complete | Checksum: 34ed192e
+INFO: [Common 17-83] Releasing license: Vivado_Synthesis
+64 Infos, 16 Warnings, 1 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2199.758 ; gain = 1480.051
+INFO: [runtcl-6] Synthesis results are not added to the cache due to CRITICAL_WARNING
+INFO: [Coretcl 2-1174] Renamed 9 cell refs.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.041 . Memory (MB): peak = 2199.758 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/vivado_tmp/eth_audio_prj/eth_audio.runs/eth_audio_audio_axis_core_0_0_synth_1/eth_audio_audio_axis_core_0_0.dcp' has been generated.
+INFO: [Vivado 12-24828] Executing command : report_utilization -file eth_audio_audio_axis_core_0_0_utilization_synth.rpt -pb eth_audio_audio_axis_core_0_0_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Tue Nov  3 00:13:16 2026...

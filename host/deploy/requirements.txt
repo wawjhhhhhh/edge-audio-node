@@ -1,0 +1,20 @@
+# 控制台（host/app）与语音助手（host/app/xiaozhi）的运行依赖
+# 需要 Python 3.10+；已在 3.12.14 上验证。
+# ⚠️ 常见坑：系统自带的 python 3.8 往往没有 numpy，直接跑会报
+#    ModuleNotFoundError: No module named 'numpy'
+#    请先 `python -c "import numpy; print(numpy.__version__)"` 确认。
+
+numpy>=2.0
+pyserial>=3.5
+sounddevice>=0.5
+scipy>=1.10
+
+# 离线中文语音识别（模型文件不随包提供，见 host/model/README.md）
+vosk>=0.3.45
+
+# Windows 平台：SAPI 语音合成 / 系统音量控制
+comtypes>=1.4; sys_platform == "win32"
+pycaw>=2024.1; sys_platform == "win32"
+
+# 可选：命令行试听神经语音（控制台主流程不依赖它）
+edge-tts>=6.1

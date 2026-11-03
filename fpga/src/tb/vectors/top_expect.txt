@@ -1,0 +1,4 @@
+A in=-44.47 out=-50.28 delta=-5.80
+B in=-40.95 out=-56.55 delta=-15.61
+C in=-19.03 out=-19.25 delta=-0.22
+D in=-19.08 out=-19.01 delta=0.07

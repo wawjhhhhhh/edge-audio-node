@@ -1,0 +1,38 @@
+# 控制台冒烟测试（换机可复现性验证）
+# 目的：证明这台包里的 host/app 不是"只能在原作者机器上跑"的代码
+# 机器：Windows / Python 3.12.14（numpy 2.x）
+# 时间：2026-11-04 04:0x
+# 注意：本次测得时 FPGA 板卡未接（链路未建立），所以 fps / 包数为 0，这是预期结果；
+#       本日志只证明"进程起得来、HTTP 有响应、AI 命令不被导入错误打断"。
+
+## 1. 启动
+$ cd C:\Users\温先生\Desktop\提交内容\edge-audio-node
+$ python host\app\run_web.py --no-window --port 8772
+serving http://127.0.0.1:8772/
+
+（首次启动失败过一次，原因与修复：ModuleNotFoundError: No module named 'pc_enhance_v2'
+ —— 该模块漏拷，已补进 host\app\pc_enhance_v2.py；同批补了 loopback.py 等共 19 个 py。）
+
+## 2. 状态接口
+$ GET /api/state
+HTTP 200  bytes=1897
+link=offline  fps=(空)  packets=(空)  frames=0  board_ip=169.254.191.50
+
+## 3. AI 控制命令（验证 work.xiaozhi 兼容垫片生效）
+$ POST /api/cmd {"op":"chat_voice","v":true}
+{"ack": "语音输出 开", "board": "172.24.23.228", "board_ok": false}
+
+$ POST /api/cmd {"op":"chat","text":"现在板子在线吗"}
+{"ack": "已发送", "ok": true}
+
+（board_ok=false 是对的：ESP32 此刻不在同一网段/未上电。有 board_ok 字段说明
+  host/app/web_server.py 里的 work.xiaozhi 别名垫片工作正常，导入没有炸。）
+
+## 4. 语音助手自检（模块方式）
+$ cd host\app
+$ python -m xiaozhi.run --selftest
+共 16 项：PASS 13 / SKIP 3 / FAIL 0
+SKIP：ESP32 串口 ×2（未插板）、ASR 模型未下载
+
+## 结论
+包内 host/app 在干净目录下可直接启动并响应，无需原作者的 work\ 目录结构。

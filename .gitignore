@@ -1,0 +1,7 @@
+﻿__pycache__/
+*.pyc
+*.swapped
+*.old
+_stage_*
+.DS_Store
+Thumbs.db

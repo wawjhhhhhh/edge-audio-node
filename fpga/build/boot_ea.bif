@@ -1,0 +1,6 @@
+the_ROM_image:
+{
+  [bootloader]D:\vitis_tmp\ws_boot2\plat_ea\zynq_fsbl\build\fsbl.elf
+  D:\vivado_tmp\eth_audio_prj\eth_audio.runs\impl_1\eth_audio_top.bit
+  D:\vitis_tmp\ws_ea\app_ea\build\app_ea_fpu.elf
+}

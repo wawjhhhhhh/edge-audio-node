@@ -1,0 +1,28 @@
+指标名称,类别,数值,单位,测量条件,测试次数·时长,证据文件
+上行音频帧率,实测,100.0,帧/秒,"ZYNQ-7020 xc7z020clg400-2；clk_fpga_0=100MHz；48kHz/16bit 立体声 1920B/帧；板载 ES8388；固件 app_ea.elf(633976B,10DD461D1834)；比特流 eth_audio_top_20261029.bit(931DA562B98C)；PC 169.254.191.246 直连；控制台 8770",3 次采样/共 6 s,metrics/logs/console_fps_20261103.csv
+上行帧率波动,实测,1.3,帧/秒,同上（最大值 100.2，最小值 98.9）,3 次采样/共 6 s,metrics/logs/console_fps_20261103.csv
+上行丢包数,实测,0,包,同上；控制台 lost 计数,1 次/6 s,metrics/logs/console_fps_20261103.csv
+播放欠载次数,实测,2,次,同上；控制台 under 计数,1 次/6 s,metrics/logs/console_fps_20261103.csv
+上行吞吐,计算,1.549,Mbit/s,200 包/秒 × 968 B × 8 bit；含 UDP/IP/以太网开销,计算值,metrics/logs/console_fps_20261103.csv
+采集端电平方位,实测,-31.2,dBFS,同上；正常说话音量下控制台 DBFS 读数,3 次采样/共 6 s,metrics/logs/console_fps_20261103.csv
+端到端音频延迟,未测,—,ms,需双通道示波器 + 时间码信号；脚本已就绪但板子当时不在线,—,metrics/scripts/latency_test.py
+降噪信噪比提升(PL 谱减),未测,—,dB,PL 谱减核未接入 BD（见 docs/known_issues.md 问题 2）,—,docs/known_issues.md
+RNNoise 单帧处理耗时,实测,20.07,ms/帧,PS Cortex-A9 667MHz；RNNoise 定点；输入 10 ms 帧（48kHz 单声道）,30 帧平均,metrics/logs/audio_core_ooc_synth.log
+Slice 利用率,实测,99.40,%,impl_1 post-route 2026-11-03 15:53 构建；Vivado 2026.1,1 次实现,fpga/report/utilization_placed.rpt
+Slice LUTs,实测,19656,个,同上,1 次实现,fpga/report/utilization_placed.rpt
+Slice Registers,实测,48299,个,同上,1 次实现,fpga/report/utilization_placed.rpt
+Block RAM Tile,实测,8,个,同上,1 次实现,fpga/report/utilization_placed.rpt
+DSP48E1,实测,0,个,同上,1 次实现,fpga/report/utilization_placed.rpt
+WNS(受约束路径),实测,0.357,ns,同上；clk_fpga_0 100MHz / clk_fpga_1 50MHz / clk_wiz 125&200MHz,1 次实现,fpga/report/timing_summary_routed.rpt
+WHS(受约束路径),实测,0.024,ns,同上,1 次实现,fpga/report/timing_summary_routed.rpt
+时序失败端点,实测,0,个,同上,1 次实现,fpga/report/timing_summary_routed.rpt
+未约束触发器数,实测,16923,个,同上；aud_bclk_reg/Q 驱动的引脚数（check_timing no_clock）,1 次实现,fpga/report/timing_summary_routed.rpt
+片上总功耗,实测,2.189,W,Vivado 功耗估算；同上比特流；25℃ 典型工艺角；12.5% 翻转率,1 次实现,fpga/report/power_routed.rpt
+动态功耗,实测,2.031,W,同上,1 次实现,fpga/report/power_routed.rpt
+静态功耗,实测,0.158,W,同上,1 次实现,fpga/report/power_routed.rpt
+clk_fpga_0,实测,100,MHz,PS FCLK0；同上,1 次实现,fpga/report/clock_utilization_routed.rpt
+aud_mclk,实测,12.292,MHz,PL MMCM 输出，周期 81.354 ns；同上,1 次实现,fpga/report/clock_utilization_routed.rpt
+aud_bclk,实测,1.536,MHz,aud_mclk/8，周期 650.8 ns；同上,1 次实现,fpga/report/clock_utilization_routed.rpt
+语音助手文字回复延迟,实测,2.46,s,控制台 AI 控制页；DeepSeek 在线模型；单轮工具调用 1 次,1 次,metrics/evidence/ui_ai_control_page.png
+语音助手朗读延迟,实测,1.3,s,同上；回复文本经 SAPI 合成后推至 ESP32,1 次,metrics/evidence/ui_ai_voice_reply.png
+板端接收字节数,实测,107952,字节,PC→TCP 9200→ESP32；板子串口回显 play 107952 与推送字节数一致,1 次,metrics/logs/web_server_run.log

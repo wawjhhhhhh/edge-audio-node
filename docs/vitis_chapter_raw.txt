@@ -1,0 +1,1100 @@
+===== PAGE 420 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+421 
+ 
+ ZYNQ Vitis  
+ 
+ 
+ 21.5.3 0x1200000   
+
+Memory Format 
+ 
+ 21.5.4 Format 
+Column Size 1OK 
+
+===== PAGE 421 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+422 
+ 
+ ZYNQ Vitis  
+ 
+ 21.5.5  
+ 
+ 
+ 21.5.6 0x1200000  
+0x1400000DMA DDR3 
+RX_BUFFER_BASEDDR3 0x1400000 FF 
+
+===== PAGE 422 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+423 
+ 
+ ZYNQ Vitis  
+ 
+ 21.5.7 0x1400000  
+  6-4  
+ 
+  
+ 21.5.8  
+6-5 1 Memory Monitors 0x1200000 
+001CPU DDR3 Cache Cache
+Data Cache DDR3Data Cache   
+
+===== PAGE 423 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+424 
+ 
+ ZYNQ Vitis  
+ 
+ 
+ 21.5.9 0x1200000   
+2  Data Cache DDR3 Memory Monitors 
+0x14000000x1400000 0x1400000
+3 92 DMA DMA
+0x1200000 0x1400000 4 
+105 DMA 
+DDR3 0x1400000 0x1400000 
+DDR3 Data Cache Memory Monitors 
+Data Cache Data Cache 
+ 
+ 21.5.10 0x1400000  
+5 Data Cache 0x1400000 00
+ 
+
+===== PAGE 424 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+425 
+ 
+ ZYNQ Vitis  
+ 
+ 21.5.11 Data Cache 0x1400000  
+DMA DDR3 DDR3 
+ Vitis Terminal  
+ 
+ 21.5.12  
+21.6  
+AXI DMA AXI DMA 
+DMA 
+DMA DMA 
+21.7  
+AXI DMA AXI DMA 256
+AXI DMA 2048 ?
+FIFO DMA IP  
+ 
+ 
+ 
+
+===== PAGE 425 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+426 
+ 
+ ZYNQ Vitis  
+  
+ES8388 
+DAC ADC
+FPGA ES8388 
+ 
+ 
+22.1  
+22.2  
+22.3  
+22.4  
+22.5  
+22.6  
+22.7  
+ 
+ 
+
+===== PAGE 426 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+427 
+ 
+ ZYNQ Vitis  
+22.1  
+ 
+
+0 10 1
+
+ADC  
+0 1
+DAC
+ 
+
+DAC ADC DAC ADC 
+
+(DSP )
+DAC ADC 
+Audio CODECCODEC
+ 
+CODEC ADC DACCODEC 
+8K44.1K48K192K 384K 768K8 16 
+24 32 CODEC HIFI
+
+ 
+ES8388  
+ 
+ 
+ES8388  
+ 
+ES8388 CODEC
+EQ 3D 
+/ 
+ES8388 8kHz~96kHz 16 18 20 24 ES8388  1.42V
+
+ 
+ES8388  
+1 ALC/Noise Gate 
+2  
+3 / 
+4  
+5 IIC SPI  
+
+===== PAGE 427 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+428 
+ 
+ ZYNQ Vitis  
+6 1.8V/1.5V 7mW 
+7 /14mW 
+ 
+ES8388  
+ 
+ 22.1.1 ES8388  
+ES8388 
+ 
+ 22.1.1  
+1ES8388 LIN1/RIN1
+LIN2/RIN2LR
+PCB  
+2ES8388 LOUT1/ROUT1LOUT2/ROUT2 
+35 ES8388 
+ES8388 DAC ES8388 ADC 
+ I2S 5 
+ 
+MCLKES8388 FPGA MCLK 
+51.2MHz12.288Mhz 
+SCLK 
+LRCK(LRCK)
+
+===== PAGE 428 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+429 
+ 
+ ZYNQ Vitis  
+ 
+ASDOUTADC FPGA
+ 
+DSDINDAC ES8388 DAC 
+4SPI I2C ES8388 
+ES8388  
+ES8388 SPI IIC SPI CECCLK CDATA 
+SPI CSnCLK DINIIC CECCLK CDATA AD0SCL SDA
+CE SPI IIC 
+CE IIC  
+ES8388 IIC CE AD0ES8388 
+ 
+ 
+ 22.1.2 IIC  
+ES8388 001000xx AD0AD0 
+0010000 
+I2S  
+ES8388 I2S  DSP/PCM 
+I2S R12ADC R23
+DAC  
+I2S(Inter-IC Sound) 
+
+I2S 
+
+ 
+I2S  
+ 
+ 22.1.3 I2S  
+
+===== PAGE 429 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+430 
+ 
+ ZYNQ Vitis  
+ 22.1.3 LRCK LRCK 
+LRCK  
+(SCLK)BCLKSCLK
+BCLK =2鬃48KHz32 
+BCLK=24800032=3072000Hz=3.072MHz 
+I2SSDATALRCK
+2 SCLK LRCK BCLK 2 
+ 
+ES8388 SCLK LRCK 
+ES8388 SCLK LRCKASDOUT 
+ 
+ 
+ 22.1.4  
+SCLK LRCK FPGA ES8388 
+BCLK LRC  
+ 
+ 22.1.5  
+SCLK LRCK 
+FPGA SCLK LRCK 
+ES8388  
+
+===== PAGE 430 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+431 
+ 
+ ZYNQ Vitis  
+ 
+ 22.1.6  
+Speed Mode Single Speed 8kHz~50kHzMCLK/LRCK
+256,384,512,768 1024Double Speed 50kHz~100kHz
+MCLK/LRCK 128,192,256,384 512LRCK 
+48kHzFPGA LRCK 48kHzMCLK 
+12.288MhzMCLK/LRCK=12.288M/48k=256
+Speed ModeR13ADC R24DAC  
+SCLK LRCK 64 LRCK 
+48kHzSCLK 48k*64=3.072Mhz 
+LRCKSCLK MCLK FPGA 
+LRCK SCLK 
+8kHz12kHz16kHz 48kHz  
+ES8388  
+ES8388 53 ADC DAC 
+SpeedMode 
+ES8388  
+1R000h1SCPRese(bit7)ES8388 
+0X80 ES83880X00ES8388  
+VMIDSEL[1:0] VMID 10 500K 
+2R101hPdnAna(bit3)1
+0 
+3 R202hadc_DigPDN(bit7) 
+dac_DigPDN(bit6)ADC DAC DSMDEM1 0  
+adc_stm_rst(bit5)dac_stm_rst(bit4)ADC DAC 1 0  
+ADCDLL_PDN(bit3)DACDLL_PDN(bit2)ADC DAC DLL  1 
+0 adcVref_PDN(bit1)dacVref_PDN(bit0)ADC DAC 1 0 
+ADC DAC R2 0ADC DAC 
+ 
+4R303hADC PdnAINL(bit7)PdnAINR(bit6)
+1 0 PdnADCL(bit5)PdnADCR(bit4)
+ADC 1 0 pdnMICB(bit3)1 0  
+
+===== PAGE 431 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+432 
+ 
+ ZYNQ Vitis  
+PdnADCBiasgen(bit2)1 0 6  0ADC
+ 
+5 R404hDAC PdnDACL(bit7)PdnDACR(bit6)
+DAC 1 0 LOUT1(bit5)ROUT1(bit4)1 
+1 0 LOUT2(bit3)ROUT2(bit2)2 
+1 0 PdnDACL PdnDACR 0DAC
+ 
+6R808hMSC(bit7)0 
+1 MCKDIV2(bit6)MCLK 2 0 1 BCLK_INV(bit5)
+BCLK 0 13 0 
+7R909hADC 1MicAmpL(bit7:4)MicAmpR(bit3:0)
+MIC 0 3dB 24dB 
+8R100AhADC 2LINSE(bit7:6)RINSE(bit5:4)
+0 11 2 
+9R120ChADC 4DATSEL(bit7:6)
+01ADC ADCLRPbit5I2S 
+0ADCWL(bit4:2)01116 
+ADCFORMAT(bit1:0)ADC 00I2S  
+10R130DhADC 5ADCFsMode(bit7)Fs 
+0 1 0ADCFsRatio(bit4:0)ADC MCLK FS 
+00010256  
+11R1610hR1711hADC 
+LADCVOL(bit7:0)RADCVOL(bit7:0)ADC 0.5dB 
+0 
+12R1812hADC 10ALCSEL(bit7:6)ALC
+00 ALC 01 ALC 10 ALC 11 ALC 
+11 
+13R2317hDAC 1DACLRSWAP(bit7)
+0 1 0DACLRP(bit6)I2S 
+0DACWL(bit5:3)01116  
+ADCFORMAT(bit1:0)DAC 00I2S  
+14R2418hDAC 2DACFsMode(bit7)Fs 
+0 1 0DACFsRatio(bit4:0)DAC MCLK FS 
+00010256  
+15R261AhR271BhDAC 
+LDACVOL(bit7:0)RDACVOL(bit7:0)DAC 
+ 
+16R291DhDAC 7ZeroL(bit7)ZeroR(bit6)
+0 1 00 0Mono(bit5)0 
+1 0SE(bit4:2)3D 0~7 3D 0  
+173927h422AhDAC LD2LO(bit7)RD2RO(bit7)
+
+===== PAGE 432 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+433 
+ 
+ ZYNQ Vitis  
+DAC 0 1 1LI2LO(bit6)RI2RO(bit6)
+0 1 1LI2LOVOL(bit5:3)RI2ROVOL(bit5:3)
+0~7 -6~-15dB 111-15dB 
+18432BhDAC 21slrck(bit7)DACLRC 
+ADCLRC 1 
+ES8388 
+ES8388 ES8388 
+ES8388  
+22.2  
+ES8388 ZYNQZYNQ
+ES8388  
+22.3  
+ 
+ES8388 
+ 
+ 
+ 22.3.1 ES8388  
+ES8388 
+LIN1/RIN1LIN2/RIN2LOUT1/ROUT1
+LOUT2/ROUT2ES8388 
+MD8002A 3W
+8/2W  
+IIC IIC EEPROM
+ 
+ 
+
+===== PAGE 433 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+434 
+ 
+ ZYNQ Vitis  
+ 22.3.1  
+ 
+ 
+ 
+ 
+IO 
+sys_clk 
+input 
+U18 
+50M 
+LVCMOS33 
+aud_iic_scl 
+output 
+E18 
+ES8388I2C 
+LVCMOS33 
+aud_iic_sda 
+inout 
+F17 
+ES8388I2C 
+LVCMOS33 
+aud_mclk 
+output 
+E19 
+ES8388 
+LVCMOS33 
+aud_bclk 
+output 
+M18 
+ES8388 
+LVCMOS33 
+aud_lrc 
+output 
+L20 
+ES8388 
+LVCMOS33 
+aud_adcdat 
+input 
+M17 
+ES8388ADC 
+LVCMOS33 
+aud_dacdat 
+output 
+G17 
+ES8388DAC 
+LVCMOS33 
+ 
+I2S I2S Reciever
+I2S TransmitterIP I2S PS I2S 
+GP AXI InterconnectPS PL  
+ES8388 I2C scl sdaPL 
+PSI2CEMIOPLI2CES8388
+
+UART  
+DDR3
+ Memory 
+Controller
+UART
+Memory
+PS
+M I O
+PL
+USB_UART
+M_AXI_GP0
+AXI
+Interconnect
+AXI4-Lite
+I2S
+Reciever
+I2S
+Transmitter
+ARM
+Cortex-A9
+I2C
+EMIO
+Clock
+AXI4-Lite
+AXI4-Lite
+AXI4-
+Stream
+ 
+ES8388
+dac_data
+lrc
+bclk             
+adc_data
+mclk                    
+scl & sda
+ 22.3.2  
+ZYNQ PS UART 
+I2C I2C ES8388  
+ZYNQ PL IP I2S I2S Receiver I2S 
+
+===== PAGE 434 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+435 
+ 
+ ZYNQ Vitis  
+TransmitterI2S I2S Receiver ES8388 adc_data 
+I2S AXI4-Stream I2S Transmitter AXI4-Stream 
+I2S ES8388 dac_data 
+I2S Receiver AXI4-Stream I2S TransmitterES8388 
+ES8388  
+I2S Receiver I2S Transmitter ZYNQ PS AXI4-Lite IP
+AXI Interconnect PL Clock 
+PLL/MMCM ES8388 mclkClock I2S Receiver 
+I2S Transmitter  
+Vivado  
+Vivado audio_loopbackBlock Design system.bd
+ZYNQ7 Processing System Hello World2-72-8 PS UART
+DDR Hello World2-10 PS PL 
+ 
+I2C ZYNQ7 Peripheral I/O Pins
+I2C 0 
+ 
+ 22.3.3 PS  
+I2C 0 EMIOES8388 I2C PL 
+PS I2C 0 EMIO PL  
+OKZYNQ  
+ZYNQ  
+
+===== PAGE 435 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+436 
+ 
+ ZYNQ Vitis  
+ 
+ 22.3.4 ZYNQ7  
+IIC_0 Make External,
+I2C aud_iic 
+ 
+ 22.3.5 I2C  
+Diagram +IPi2sI2S Receiver
+I2S Transmitter IP  
+ 
+ 22.3.6 I2S IP  
+ 
+
+===== PAGE 436 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+437 
+ 
+ ZYNQ Vitis  
+ 
+ 22.3.7 I2S IP 
+I2S IP I2S Receiver  
+ 
+ 22.3.8 I2S Receiver IP  
+Audio Channels ES8388 /
+2I2S Data Width ES8388 ADC 
+16 FIFO Depth FIFO  
+
+===== PAGE 437 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+438 
+ 
+ ZYNQ Vitis  
+I2S Transmitter I2S Receiver  
+ 
+ 22.3.9 I2S Transmitter IP  
+I2S IP ES8388 I2S Receiver ES8388 
+Make Externalsdata_0_in 
+ 
+ 22.3.10 I2S Receiver  
+aud_adc_dataI2S Receiver
+I2S Transmitter IP ES8388 BCLK LRC 
+ZYNQ  
+I2S Transmitter ES8388Make External
+sdata_0_outlrclk_out
+
+===== PAGE 438 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+439 
+ 
+ ZYNQ Vitis  
+aud_dac_dataaud_lrc 
+ 
+ 22.3.11 I2S Transmitter  
+I2S Transmitter sclk_outI2S BCLK
+aud_bclk 
+I2S Receiver m_axis_aud I2S Transmitter
+s_axis_aud AXI4-Stream 
+ 
+ 
+ 22.3.12 I2S IP axis_aud  
+ 
+
+===== PAGE 439 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+440 
+ 
+ ZYNQ Vitis  
+ 
+ 
+ 22.3.13  
+ 
+ 22.3.14  
+Clocking Options 
+MANUAL50MHzZYNQ PL 
+ 
+
+===== PAGE 440 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+441 
+ 
+ ZYNQ Vitis  
+ 
+ 22.3.15  
+Output Clocks clk_out1 12.2888MHzES8388 
+IP MCLK I2S IP 
+128*Fs Fs Fs 96KHzclk_out1
+N*128*48KHzN N 1 MCLK 1*128*96000 
+= 12288000Hz12.288MHz 
+clk_out1  
+
+===== PAGE 441 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+442 
+ 
+ ZYNQ Vitis  
+ 
+ 
+ 22.3.16  
+Output Clocks reset
+OK 
+ 
+ 22.3.17  
+
+===== PAGE 442 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+443 
+ 
+ ZYNQ Vitis  
+clk_in1 Make Externalsys_clkclk_out1 
+Make Externalaud_mclk 
+ 
+ 22.3.18  
+clk_out1 I2S Receiver I2S Transmitter aud_mclk
+ 
+vectorUtility Vector LogicIP IP  
+ 
+ 22.3.19 Utility Vector Logic IP 
+
+===== PAGE 443 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+444 
+ 
+ ZYNQ Vitis  
+IP 1  
+lockedI2S Receiver 
+I2S Transmitter aud_mrst locked aud_mrst
+locked  
+ 
+ 22.3.20 locked  
+Diagram Run Block AutomationRun Connection Automation
+ 
+ 
+ 22.3.21  
+Run Connection AutomationAll Automation
+ 
+
+===== PAGE 444 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+445 
+ 
+ ZYNQ Vitis  
+ 
+ 22.3.22  
+Block Design  
+ 
+ 22.3.23  
+IP AXI AXI 
+InterconnectProcessor System ReseetZYNQ 
+M_AXI_GP0 AXI I2S Receiver I2S Transmitter  
+Block Design Diagram Validate Design
+Validation SuccessfulOK
+Ctrl + S 
+
+===== PAGE 445 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+446 
+ 
+ ZYNQ Vitis  
+Source Block Design system.bdGenerate Output 
+ProductsCreate HDL Wrapper 
+Source ConstraintsAdd Sources 
+ 
+ 22.3.24  
+Add or create constraints 
+ 
+ 22.3.25 Add or create constraints 
+NextCreate File 
+
+===== PAGE 446 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+447 
+ 
+ ZYNQ Vitis  
+ 
+ 22.3.26  
+Create Filepins 
+ 
+ 22.3.27  
+ 
+
+===== PAGE 447 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+448 
+ 
+ ZYNQ Vitis  
+ 
+ 22.3.28  
+ 
+set_property -dict {PACKAGE_PIN E18 IOSTANDARD LVCMOS33} [get_ports aud_iic_scl_io] 
+set_property -dict {PACKAGE_PIN F17 IOSTANDARD LVCMOS33} [get_ports aud_iic_sda_io] 
+set_property -dict {PACKAGE_PIN L20 IOSTANDARD LVCMOS33} [get_ports aud_lrc] 
+set_property -dict {PACKAGE_PIN M17 IOSTANDARD LVCMOS33} [get_ports aud_adc_data] 
+set_property -dict {PACKAGE_PIN G17 IOSTANDARD LVCMOS33} [get_ports aud_dac_data] 
+set_property -dict {PACKAGE_PIN M18 IOSTANDARD LVCMOS33} [get_ports aud_bclk] 
+set_property -dict {PACKAGE_PIN E19 IOSTANDARD LVCMOS33} [get_ports aud_mclk] 
+set_property -dict {PACKAGE_PIN U18 IOSTANDARD LVCMOS33} [get_ports sys_clk] 
+Ctrl+S Flow Navigator PROGRAM AND 
+DEBUGGenerate BitstreamBitstream  
+Bitstream  File > Export > Export hardware 
+Include bitstreamTools > Launch Vitis IDEVitis  
+22.4  
+Vitis audio_loopback
+main.c 
+ES8388 
+ZYNQZYNQ ES8388 
+I2S I2S Receiver I2S Transmitter IP 
+I2S Receiver I2S Transmitter I2S Receiver I2S Transmitter
+IIC IIC IIC ES8388
+ES8388_Write_Reg()ES8388  
+ 
+
+===== PAGE 448 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+449 
+ 
+ ZYNQ Vitis  
+1   #include <stdio.h> 
+2   #include "xparameters.h" 
+3   #include "xi2srx.h" 
+4   #include "xi2stx.h" 
+5   #include "xiicps.h" 
+6   #include "sleep.h" 
+7    
+8   #define FS                   96000       //96Khz 
+9   #define MCLK                 12288000    //1*128*fs 
+10  #define IIC_SLAVE_ADDR       0x10        //es8388  
+11  #define IIC_SCLK_RATE        100000      //I2C  
+12   
+13  //ID 
+14  #define I2S_RX_DEVICE_ID     XPAR_XI2SRX_0_DEVICE_ID 
+15  #define I2S_TX_DEVICE_ID     XPAR_XI2STX_0_DEVICE_ID 
+16  #define IIC_DEVICE_ID        XPAR_XIICPS_0_DEVICE_ID 
+17  // 
+18  XI2srx_Config *I2s_Rx_Config; 
+19  XI2stx_Config *I2s_Tx_Config; 
+20  XIicPs_Config *I2c_Config; 
+21  // 
+22  XI2s_Rx I2s_rx; 
+23  XI2s_Tx I2s_tx; 
+24  XIicPs  Iic; 
+25   
+26  //WM8960  
+27  void ES8388_Write_Reg(u8 reg_addr, u8 reg_data); 
+28  int main() 
+29  { 
+30      print("ES8388 Audio Loopback!\n\r"); 
+31   
+32      // I2S Receiver 
+33      I2s_Rx_Config = XI2s_Rx_LookupConfig(I2S_RX_DEVICE_ID); 
+34      XI2s_Rx_CfgInitialize(&I2s_rx, I2s_Rx_Config, I2s_Rx_Config->BaseAddress); 
+35      // I2S Receiver BCLK  
+36      XI2s_Rx_SetSclkOutDiv(&I2s_rx, MCLK, FS); 
+37      // I2S Receiver  
+38      XI2s_Rx_Enable(&I2s_rx, TRUE); 
+39   
+40      // I2S Transmitter 
+41      I2s_Tx_Config = XI2s_Tx_LookupConfig(I2S_TX_DEVICE_ID); 
+
+===== PAGE 449 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+450 
+ 
+ ZYNQ Vitis  
+42      XI2s_Tx_CfgInitialize(&I2s_tx, I2s_Tx_Config, I2s_Tx_Config->BaseAddress); 
+43      // I2S Transmitter BCLK  
+44      XI2s_Tx_SetSclkOutDiv(&I2s_tx, MCLK, FS); 
+45      // I2S Transmitter  
+46      XI2s_Tx_Enable(&I2s_tx,TRUE); 
+47   
+48      // IIC  
+49      I2c_Config = XIicPs_LookupConfig(IIC_DEVICE_ID); 
+50      XIicPs_CfgInitialize(&Iic, I2c_Config, I2c_Config->BaseAddress); 
+51      //I2C  
+52      XIicPs_SetSClk(&Iic, IIC_SCLK_RATE); 
+53   
+54      //es8388  
+55      ES8388_Write_Reg(0, 0x80); 
+56      ES8388_Write_Reg(0, 0x00); 
+57      usleep(100000); 
+58      ES8388_Write_Reg(1, 0x58); 
+59      ES8388_Write_Reg(1, 0x50); 
+60      ES8388_Write_Reg(2, 0xF3); 
+61      ES8388_Write_Reg(2, 0x00); 
+62      ES8388_Write_Reg(3, 0x09); 
+63      ES8388_Write_Reg(0, 0x06); 
+64      ES8388_Write_Reg(4, 0x3C); 
+65      ES8388_Write_Reg(8, 0x00); 
+66      ES8388_Write_Reg(9, 0x00); 
+67      ES8388_Write_Reg(10, 0x50); 
+68      ES8388_Write_Reg(12, 0x4C); 
+69      ES8388_Write_Reg(13, 0x0C); 
+70      ES8388_Write_Reg(16, 0x00); 
+71      ES8388_Write_Reg(17, 0x00); 
+72      ES8388_Write_Reg(18, 0xC0); 
+73      ES8388_Write_Reg(23, 0x18); 
+74      ES8388_Write_Reg(24, 0x0C); 
+75      ES8388_Write_Reg(26, 0x0A); 
+76      ES8388_Write_Reg(27, 0x0A); 
+77      ES8388_Write_Reg(29, 0x1C); 
+78      ES8388_Write_Reg(39, 0xF8); 
+79      ES8388_Write_Reg(42, 0xF8); 
+80      ES8388_Write_Reg(43, 0x80); 
+81      ES8388_Write_Reg(46, 0x14); 
+82      ES8388_Write_Reg(47, 0x14); 
+
+===== PAGE 450 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+451 
+ 
+ ZYNQ Vitis  
+83      ES8388_Write_Reg(48, 0x1E); 
+84      ES8388_Write_Reg(49, 0x1E); 
+85      usleep(100000); 
+86   
+87   
+88      printf("ES8388 Configure Done!\r\n"); 
+89   
+90      return 0; 
+91  } 
+92   
+93  //ES8388  
+94  void ES8388_Write_Reg(u8 reg_addr, u8 reg_data){ 
+95    u8 I2C_Data[2]; 
+96   
+97    // 
+98    I2C_Data[0] = reg_addr; 
+99    // 
+100   I2C_Data[1] = reg_data; 
+101   //I2C  
+102   XIicPs_MasterSendPolled(&Iic, I2C_Data, 2, IIC_SLAVE_ADDR); 
+103   // 
+104   while (XIicPs_BusIsBusy(&Iic)) ; 
+105 } 
+32 38 I2S Receiver
+XI2s_Rx_SetSclkOutDiv( )BCLK 
+XI2s_Rx_Enable( ) 
+I2S Receiver BCLK XI2s_Rx_SetSclkOutDiv( )
+MCLK FSMCLK I2S Receiver aud_mclk 12288000Hz
+FS ES8388 96KHzBCLK 2*16*FS
+16  
+40 46 I2S Transmitter I2S Receiver 
+PS I2C ES8388 48 52
+I2C I2C 100KHz 
+54 85 ES8388_Write_Reg( )ES8388 
+ES8388 
+ES8388 ES8388  
+
+===== PAGE 451 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+452 
+ 
+ ZYNQ Vitis  
+ 
+ 22.4.1 ES8388  
+
+ 22.4.1 ADC
+DACES8388 
+ES8388  
+ES8388_Write_Reg( ) 
+93  //ES8388  
+94  void ES8388_Write_Reg(u8 reg_addr, u8 reg_data){ 
+95    u8 I2C_Data[2]; 
+96   
+97    // 
+98    I2C_Data[0] = reg_addr; 
+99    // 
+100   I2C_Data[1] = reg_data; 
+101   //I2C  
+102   XIicPs_MasterSendPolled(&Iic, I2C_Data, 2, IIC_SLAVE_ADDR); 
+103   // 
+104   while (XIicPs_BusIsBusy(&Iic)) ; 
+
+===== PAGE 452 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+453 
+ 
+ ZYNQ Vitis  
+105 } 
+ES8388_Write_Reg( )I2C ES8388 
+reg_addr reg_dataES8388 
+8bit8bitI2C 8bit reg_addrES8388 
+reg_data 
+ES8388_Write_Reg( )u8 I2C_Data
+98 8bit reg_addr I2C_Data[0]100 
+reg_data 8bit I2C_Data[1] 
+xiicps.h XIicPs_MasterSendPolled( ) I2C 
+ES8388 102 XIicPs_MasterSendPolled( )
+I2C I2C 
+I2C_Data 2 
+I2C ES8388 0010000
+10 
+90 while( )I2C XIicPs_BusIsBusy( )
+I2C I2C 0while()
+  
+22.5  
+LINE_IN 
+ 
+ 
+ 22.5.1  
+JTAG USB 
+USB_UART 
+LINE_IN PHONE
+ 
+
+===== PAGE 453 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+454 
+ 
+ ZYNQ Vitis  
+ 
+ 22.5.2  
+Vitis  Window > Show view > Terminal 
+Vitis Terminal  
+ 
+  22.5.3  
+
+ZYNQ  
+22.6  
+ES8388
+
+===== PAGE 454 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+455 
+ 
+ ZYNQ Vitis  
+
+I2S I2S RecieverI2S Transmitter
+IP I2S  
+22.7  
+I2C0 ES8388 I2C1 ES8388
+ES8388 
+ 
+  
+ 
+ 
+
+===== PAGE 455 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+456 
+ 
+ ZYNQ Vitis  
+ IP  
+IP Block DesignVivado IP
+IP IP HDL 
+IP   
+ 
+23.1  
+23.2  
+23.3  
+23.4  
+23.5  
+23.6  
+ 
+ 
+ 
+ 
+ 
+
+===== PAGE 456 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+457 
+ 
+ ZYNQ Vitis  
+23.1  
+Vivado Xilinx IP IP  23.1.1 IP
+IP 
+IP Vivado IP IP  
+ 
+ 23.1.1 Vivado IP  
+Block Design IP IP 
+Vivado IP  23.1.2  
+ 
+ 23.1.2 Vivado  
+IP InterfacesPorts
+
+
+
+===== PAGE 457 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+458 
+ 
+ ZYNQ Vitis  
+ 
+ 23.1.3 AXI GPIO IP IP 
+ 
+ 
+ 23.1.3 AXI GPIO IP  
+ 
+ 
+ 23.1.4  
+ 23.1.4 S_AXI 17 s_axi_GPIO 3
+gpio_io_ 
+IP IP 
+Vivado IP 
+
+===== PAGE 458 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+459 
+ 
+ ZYNQ Vitis  
+ 
+23.2  
+ZYNQ FPGA HDMI RGB2DVI
+IP  
+23.3  
+ZYNQ FPGA HDMI 
+ZYNQ FPGA HDMI  
+23.4  
+1IP  
+Vivado DVI_TXIP 
+Vivado 
+ 
+DVI_TX ip ifip IP if 
+if interface  
+ 
+ 23.4.1 IP  
+ip src FPGA HDMI 4 
+src  
+ 
+ 23.4.2 IP  
+ 
+
+===== PAGE 459 =====
+ 
+ 
+www.yuanzige.com                        : www.openedv.com/forum.php 
+460 
+ 
+ ZYNQ Vitis  
+ 
+ 23.4.3 HDMI  
+2Vivado  
+Vivado IP  
+Vivado Tasks Manage IPNew IP Location
+ 
+ 
+ 23.4.4 IP  
+Next 
